@@ -20,13 +20,13 @@ body {
     background-color:#AB2017;
 }
 
-#title {
+#site_name {
     margin-left:25px;
     display: inline;
     font-weight:700;
 }
 
-#title a {
+#site_name a {
     color: #FFFFFF;
     text-decoration:none;
 }
@@ -49,23 +49,22 @@ ul, ul#navigation li {
     height:100%;
 }
 
-.topic {
+li.topic {
     padding-top:8px;
     padding-bottom:8px;
-    padding-left:25px;
 }
 
-.topic_title {
-    font-weight:400;
-}
-
-.topic h3 {
+li.topic h3 {
     margin:0;
     padding:0;
 }
 
-.topic a {
+li.topic a {
     text-decoration:none;
+}
+
+.topic_title {
+    font-weight:400;
 }
 
 .odd {
