@@ -37,9 +37,10 @@ ul, ul#navigation li {
 
 #submit {
     float:right;
-    margin-right:25px;
-    font-size:15pt;
-    font-weight:600;
+    margin-right:24px;
+    margin-top:7px;
+    font-size:12pt;
+    font-weight:500;
     color:#FFFF00;
     text-decoration:none;
 }
