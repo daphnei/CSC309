@@ -25,29 +25,34 @@ var app = {
     },
     
     // Return true if the data present in the field is valid, false otherwise
-    valid_check: function(data) {
-        console.log('Look, I am checking ' + data.value + ' Well, I will be soon.');
+    is_valid: function(data) {
+        console.log('Look, I am checking ' + data.name + ' ...Well, I will be soon.');
         return true;
     },
     
     // Return a JSON stringyfied string representative of form_data
-    make_into_json: function(form_data) {
-        console.log('Converting form data into JSON... well not yet. It still needs to be implemented');
+    // Pre: form_data has been validated
+    jsonify: function(form_data) {
+        var json_data = {};
+        $.each(form_data, function(i, data) {
+            json_data[data.name] = data.value;
+        });
+        return json_data;
     },
     
     // Send submission request to server. Hide submission form
     submit_topic: function() {
         var form_data = $("#submission_form :input").serializeArray();
-        
-        $.each(form_data, function(i, data){
-            if(!app.valid_check(data)) {
+        console.log(form_data);
+        $.each(form_data, function(i, data) {
+            if(!app.is_valid(data)) {
                 console.log('Data not valid');
                 return false;
             }
         });
         
-        var json_submission = this.make_into_json(form_data);
-        
+        var json_submission = this.jsonify(form_data);
+        console.log(json_submission);
         // Submit data to server (Will report an error )
 //            $.ajax({
 //                type: 'POST',
