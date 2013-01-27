@@ -3,6 +3,7 @@ var app = {
     
     // Show the submission field on the frontpage
     show_form: function () {
+        
         // HTML that creates the submission form
         var form = 
             '<form name="about_to_submit" id="super">' + 
@@ -26,59 +27,45 @@ var app = {
     
     // Check if the given piece of data is valid.
     // Returns nothing if valid, otherwise a rejection reason.
-    // validate: function(data) {
-    //     if (!data.value) {
-    //         return "You didn't fill in the field."
-    //     }
-    // },
+    validate: function(data) {
+        if (!data.value) {
+            return "You didn't fill in the field."
+        }
+
+        if(data.value.length > 140) {
+            return "Your title is too damn long!"
+        }
+
+    },
 
     // Reject the given piece of data for the given reason.
-    // reject: function(data, reason) {
-    //     console.log("Invalid " + data.name + ": " + reason);
-    // },
-
-    // Return true if the data present in the field is valid, false otherwise
-    field_check: function(data) {
-        var result = true;
-        
-        // Values in the field cannot be pass 140 characters
-        if(data.value.length > 140 || data.value.length === 0) {
-            result = false;
-            console.log('Data not valid');
-        }
-        
-        return result;
+    reject: function(data, reason) {
+        console.log("Invalid " + data.name + ": " + reason);
     },
         
     // Send submission request to server, hiding the submission form afterwards
     submit_topic: function() {
         
         // Place all fields into an array, where each element in a JS object
-        var form_data = $('#submission_form :input').serializeArray();
+        var form_data = $('#submission_form :input').serializeArray(),
+                valid = true;
 
         // Alex: This is here since "each" returns from its own
         // scope, but we want to return from the scope of submit_topic.
         // Can anyone come up with a more elegant solution?
-        // var valid = true;
-        // $.each(form_data, function(i, data) {
-        //     if (rejection_reason = app.validate(data)) {
-        //         app.reject(data, rejection_reason);
-        //         return valid = false;
-        //     }
-        // });
-        // if (!valid) {
-        //     return false;
-        // }
+        $.each(form_data, function(i, data) {
 
-        // Go through every field and check for valid length. 
-        // Exit if any input if any input is invalid
-        $.each(form_data, function(i, data){
-            if(!app.field_check(data)) {
-                
-                // For some reason this isn't exiting...
-                return false;
+            // Find out why the data is invalid
+            if (rejection_reason = app.validate(data)) {
+                app.reject(data, rejection_reason);
+                return valid = false;
             }
         });
+
+        // Submission cannot take place due to invalid data
+        if (!valid) {
+            return false;
+        }
 
         // DEBUG: The form data isn't perfect, but the necessary info can be extrapolated for making a topic
         // It could also be fixed by fiddling with the form
