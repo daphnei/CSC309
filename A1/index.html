@@ -10,14 +10,12 @@
                 <h2 id="site_name"><a href="./index.html">Unicorn News</a></h2>
                 
                 <ul id="navigation">
-                    <li><a href="#" id="submit" onclick="app.show_submission();">Submit</a></li>
+                    <li><a href="#" id="submit">Submit</a></li>
                 </ul>
                 
             </div>
             
-            <div id="submission">
-
-            </div>
+            <div id="submission_form"> </div>
             
             <ol id="content">
                 <li id="topic1" class="topic">
@@ -73,27 +71,54 @@
 </html>
 
 <script>
+    
     // Single global variable app containing all the frontend functionality
     var app = {
         
         // Show the submission field on the frontpage
-        show_submission: function () {
+        show_form: function () {
             // HTML that creates the submission form
-            var form = '<form name="about_to_submit">' + 
-                '<label for="url">title:</label>' + 
-                '<input value="" type="text" size="60" name="title" id="submit_form">' + 
-                '<label for="url">url:</label>' + 
-                '<input value="" type="text" size="60" name="url" id="url_form">' + 
-                '<input value="Submit" type="button" name="do_submit">' +
-                '<input value="Cancel" type="button" name="do_cancel" onclick="app.hide_submission();">' +
+            var form = 
+                '<form name="about_to_submit" id="super">' + 
+                    '<label for="url">title:</label>' + 
+                    '<input value="" type="text" size="60" name="title" id="submit_form"/>' + 
+                    '<label for="url">url:</label>' + 
+                    '<input value="" type="text" size="60" name="url" id="url_form"/>' + 
+                
+                    // Event handlers will be independent of HTML tags. Onclick will be removed, coming soon...
+                    '<input value="Submit" type="button" name="do_submit" id="submit_button" onclick="app.submit_topic();"/>' +
+                    '<input value="Cancel" type="button" name="do_cancel" id="submit_cancel" onclick="app.hide_form();"/>' +
                 '</form>';
             
-            $('#submission').html(form);
+            $('#submission_form').html(form);
         },
         
         // Hide the submission field on the frontpage
-        hide_submission: function () {
-            $('#submission').html('');
+        hide_form: function () {
+            $('#submission_form').html('');
+        },
+        
+        parse_form_input: function(data) {
+            console.log('Look, I am parsing ' + data.value + ' Well, I will be soon.');
+        },
+        
+        // Send submission request to server. Hide submission form
+        submit_topic: function() {
+            var form_data = $("#submission_form :input").serializeArray();
+            
+            $.each(form_data, function(i, data){
+                app.parse_form_input(data);
+            });
+            
+            // Send stuff to server...
+            
+            this.hide_form();
         }
     }
+        
+    // All event handlers
+    $('#submit').click(function(){
+            app.show_form();
+    });
+        
 </script>
