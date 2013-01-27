@@ -11,13 +11,20 @@ var app = {
                 '<input value="" type="text" size="60" name="title" id="submit_form"/>' + 
                 '<label for="url">url:</label>' + 
                 '<input value="" type="text" size="60" name="url" id="url_form"/>' + 
-            
-                // Event handlers will be independent of HTML tags. Onclick will be removed, coming soon...
-                '<input value="Submit" type="button" name="do_submit" id="submit_button" onclick="app.submit_topic();"/>' +
-                '<input value="Cancel" type="button" name="do_cancel" id="submit_cancel" onclick="app.hide_form();"/>' +
+                '<input value="Submit" type="button" name="do_submit" id="submit_button"/>' +
+                '<input value="Cancel" type="button" name="do_cancel" id="submit_cancel"/>' +
             '</form>';
         
         $('#submission_form').html(form);
+        
+        // Bind event handlers for form after its in the DOM
+        $('input#submit_button').click(function(){
+            app.submit_topic();
+        });
+        
+        $('input#submit_cancel').click(function(){
+            app.hide_form();
+        });
     },
     
     // Hide the submission field on the frontpage
