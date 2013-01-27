@@ -98,8 +98,9 @@
             $('#submission_form').html('');
         },
         
-        parse_form_input: function(data) {
-            console.log('Look, I am parsing ' + data.value + ' Well, I will be soon.');
+        valid_check: function(data) {
+            console.log('Look, I am checking ' + data.value + ' Well, I will be soon.');
+            return true;
         },
         
         // Send submission request to server. Hide submission form
@@ -107,11 +108,22 @@
             var form_data = $("#submission_form :input").serializeArray();
             
             $.each(form_data, function(i, data){
-                app.parse_form_input(data);
+                if(!app.valid_check(data)) {
+                    console.log('Data not valid');
+                    return false;
+                }
             });
             
-            // Send stuff to server...
-            
+            // Submit data to server
+//            $.ajax({
+//                type: 'POST',
+//                url: '/topic/submit',
+//                data: JSON.stringify ({}), // Submission in JSON
+//                success: function(data) {},
+//                contentType: "application/json",
+//                dataType: 'json'
+//            });
+//                        
             this.hide_form();
         }
     }
