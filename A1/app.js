@@ -6,18 +6,25 @@ var app = {
 
         // HTML that creates the submission form
         var form = 
-            '<form name="about_to_submit" id="super">' + 
+            '<form name="about_to_submit">' + 
                 '<label for="url">title:</label>' + 
                 '<input value="" type="text" size="60" name="title" id="submit_form"/>' + 
                 '<label for="url">url:</label>' + 
                 '<input value="" type="text" size="60" name="url" id="url_form"/>' + 
-            
-                // Event handlers will be independent of HTML tags. Onclick will be removed, coming soon...
-                '<input value="Submit" type="button" name="do_submit" id="submit_button" onclick="app.submit_topic();"/>' +
-                '<input value="Cancel" type="button" name="do_cancel" id="submit_cancel" onclick="app.hide_form();"/>' +
+                '<input value="Submit" type="button" name="do_submit" id="submit_button"/>' +
+                '<input value="Cancel" type="button" name="do_cancel" id="submit_cancel"/>' +
             '</form>';
         
         $('#submission_form').html(form);
+        
+        // Bind event handlers for form after its in the DOM
+        $('input#submit_button').click(function(){
+            app.submit_topic();
+        });
+        
+        $('input#submit_cancel').click(function(){
+            app.hide_form();
+        });
     },
     
     // Hide the submission field on the frontpage
@@ -55,6 +62,16 @@ var app = {
         // Convert into a json string
         return JSON.stringify(json_data);
     },
+    
+    // Return string containing the structure of a topic
+    create_topic: function(title, interest_link, total_points, comment_count){
+        // Magic with string manipulation...
+    },
+    
+    // Place topic on the frontpage. Construct html from data received from server
+    render_topic: function(data) {
+        // User create_topic and then use jQuery to render on DOM...  
+    },
         
     // Send submission request to server, hiding the submission form afterwards
     submit_topic: function() {
@@ -88,7 +105,7 @@ var app = {
 //            type: 'POST',
 //            url: '/topic/submit',
 //            data: form_data,
-//            success: function(form_data) {this.render_topic(form_data)}, 
+//            success: function(data) {this.render_topic(data)}, 
 //            contentType: "application/json",
 //            dataType: 'json'
 //        });
