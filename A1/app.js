@@ -26,60 +26,74 @@ var app = {
     
     // Check if the given piece of data is valid.
     // Returns nothing if valid, otherwise a rejection reason.
-    validate: function(data) {
-        if (!data.value) {
-            return "You didn't fill in the field."
-        }
-    },
+    // validate: function(data) {
+    //     if (!data.value) {
+    //         return "You didn't fill in the field."
+    //     }
+    // },
 
     // Reject the given piece of data for the given reason.
-    reject: function(data, reason) {
-        console.log("Invalid " + data.name + ": " + reason);
+    // reject: function(data, reason) {
+    //     console.log("Invalid " + data.name + ": " + reason);
+    // },
+
+    // Return true if the data present in the field is valid, false otherwise
+    field_check: function(data) {
+        var result = true;
+        
+        // Values in the field cannot be pass 140 characters
+        if(data.value.length > 140 || data.value.length === 0) {
+            result = false;
+            console.log('Data not valid');
+        }
+        
+        return result;
     },
-    
-    // Return a JSON stringyfied string representative of form_data
-    // Pre: form_data has been validated
-    jsonify: function(form_data) {
-        var json_data = {};
-        $.each(form_data, function(i, data) {
-            json_data[data.name] = data.value;
-        });
-        return json_data;
-    },
-    
+        
     // Send submission request to server, hiding the submission form afterwards
     submit_topic: function() {
-        var form_data = $("#submission_form :input").serializeArray();
+        
+        // Place all fields into an array, where each element in a JS object
+        var form_data = $('#submission_form :input').serializeArray();
 
         // Alex: This is here since "each" returns from its own
         // scope, but we want to return from the scope of submit_topic.
         // Can anyone come up with a more elegant solution?
-        var valid = true;
-        $.each(form_data, function(i, data) {
-            if (rejection_reason = app.validate(data)) {
-                app.reject(data, rejection_reason);
-                return valid = false;
+        // var valid = true;
+        // $.each(form_data, function(i, data) {
+        //     if (rejection_reason = app.validate(data)) {
+        //         app.reject(data, rejection_reason);
+        //         return valid = false;
+        //     }
+        // });
+        // if (!valid) {
+        //     return false;
+        // }
+
+        // Go through every field and check for valid length. 
+        // Exit if any input if any input is invalid
+        $.each(form_data, function(i, data){
+            if(!app.field_check(data)) {
+                
+                // For some reason this isn't exiting...
+                return false;
             }
         });
-        if (!valid) {
-            return false;
-        }
 
-        var json_submission = this.jsonify(form_data);
-        console.log(json_submission);
+        // DEBUG: The form data isn't perfect, but the necessary info can be extrapolated for making a topic
+        // It could also be fixed by fiddling with the form
+        console.log(JSON.stringify(form_data));
+        
+//        // Submit data to server (Will report an error without a server)
+//        $.ajax({
+//            type: 'POST',
+//            url: '/topic/submit',
+//            data: JSON.stringify(form_data),
+//            success: function(form_data) {this.render_topic(form_data)}, 
+//            contentType: "application/json",
+//            dataType: 'json'
+//        });
 
-        // TODO: Set up server to accept data.
-        // Submit data to server (Will report an error )
-        /*   
-            $.ajax({
-               type: 'POST',
-               url: '/topic/submit',
-               data: json_submission, // Submission in JSON
-               success: function(data) {},
-               contentType: "application/json",
-               dataType: 'json'
-           });
-        */
         this.hide_form();
     }
 };  
