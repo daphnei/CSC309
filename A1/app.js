@@ -50,18 +50,25 @@ var app = {
     // Send submission request to server, hiding the submission form afterwards
     submit_topic: function() {
         var form_data = $("#submission_form :input").serializeArray();
-        console.log(form_data);
+
+        // Alex: This is here since "each" returns from its own
+        // scope, but we want to return from the scope of submit_topic.
+        // Can anyone come up with a more elegant solution?
+        var valid = true;
         $.each(form_data, function(i, data) {
             if (rejection_reason = app.validate(data)) {
                 app.reject(data, rejection_reason);
-                return false;
+                return valid = false;
             }
         });
-        
+        if (!valid) {
+            return false;
+        }
+
         var json_submission = this.jsonify(form_data);
         console.log(json_submission);
 
-        // TODO: Set up server to accept error.
+        // TODO: Set up server to accept data.
         // Submit data to server (Will report an error )
         /*   
             $.ajax({
