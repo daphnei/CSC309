@@ -36,13 +36,12 @@ var app = {
     // Returns nothing if valid, otherwise a rejection reason.
     validate: function(data) {
         if (!data.value) {
-            return "You didn't fill in the field."
+            return "You didn't fill in the field.";
         }
 
         if(data.value.length > 140) {
-            return "Your title is too damn long!"
+            return "Your title is too damn long!";
         }
-
     },
 
     // Reject the given piece of data for the given reason.
@@ -63,14 +62,14 @@ var app = {
         return JSON.stringify(json_data);
     },
     
-    // Return string containing the structure of a topic
+    // Return html string containing the structure of new a topic
     create_topic: function(title, interest_link, total_points, comment_count){
         // Magic with string manipulation...
     },
     
-    // Place topic on the frontpage. Construct html from data received from server
+    // Place topic created from data on the frontpage
     render_topic: function(data) {
-        // User create_topic and then use jQuery to render on DOM...  
+        // Use create_topic and then use jQuery to render on DOM...  
     },
         
     // Send submission request to server, hiding the submission form afterwards
@@ -86,9 +85,13 @@ var app = {
         $.each(form_data, function(i, data) {
 
             // Find out why the data is invalid
-            if (rejection_reason = app.validate(data)) {
+            rejection_reason = app.validate(data);
+            
+            // Display reason upon failure
+            if (rejection_reason) {
                 app.reject(data, rejection_reason);
-                return valid = false;
+                valid = false;
+                return valid;
             }
         });
 
@@ -105,7 +108,11 @@ var app = {
 //            type: 'POST',
 //            url: '/topic/submit',
 //            data: form_data,
-//            success: function(data) {this.render_topic(data)}, 
+//            
+//            // The server's response upon successfully sending the topic is the corresponding json string
+//            success: function(data, textStatus, jqXHR) {
+//                this.render_topic(data)
+//            },
 //            contentType: "application/json",
 //            dataType: 'json'
 //        });
