@@ -24,10 +24,17 @@ var app = {
         $('#submission_form').html('');
     },
     
-    // Return true if the data present in the field is valid, false otherwise
-    is_valid: function(data) {
-        console.log('Look, I am checking ' + data.name + ' ...Well, I will be soon.');
-        return true;
+    // Check if the given piece of data is valid.
+    // Returns nothing if valid, otherwise a rejection reason.
+    validate: function(data) {
+        if (!data.value) {
+            return "You didn't fill in the field."
+        }
+    },
+
+    // Reject the given piece of data for the given reason.
+    reject: function(data, reason) {
+        console.log("Invalid " + data.name + ": " + reason);
     },
     
     // Return a JSON stringyfied string representative of form_data
@@ -40,29 +47,32 @@ var app = {
         return json_data;
     },
     
-    // Send submission request to server. Hide submission form
+    // Send submission request to server, hiding the submission form afterwards
     submit_topic: function() {
         var form_data = $("#submission_form :input").serializeArray();
         console.log(form_data);
         $.each(form_data, function(i, data) {
-            if(!app.is_valid(data)) {
-                console.log('Data not valid');
+            if (rejection_reason = app.validate(data)) {
+                app.reject(data, rejection_reason);
                 return false;
             }
         });
         
         var json_submission = this.jsonify(form_data);
         console.log(json_submission);
+
+        // TODO: Set up server to accept error.
         // Submit data to server (Will report an error )
-//            $.ajax({
-//                type: 'POST',
-//                url: '/topic/submit',
-//                data: json_submission, // Submission in JSON
-//                success: function(data) {},
-//                contentType: "application/json",
-//                dataType: 'json'
-//            });
-//                        
+        /*   
+            $.ajax({
+               type: 'POST',
+               url: '/topic/submit',
+               data: json_submission, // Submission in JSON
+               success: function(data) {},
+               contentType: "application/json",
+               dataType: 'json'
+           });
+        */
         this.hide_form();
     }
 };  
