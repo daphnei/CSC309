@@ -3,7 +3,7 @@ var app = {
     
     // Show the submission field on the frontpage
     show_form: function () {
-        
+
         // HTML that creates the submission form
         var form = 
             '<form name="about_to_submit" id="super">' + 
@@ -42,6 +42,19 @@ var app = {
     reject: function(data, reason) {
         console.log("Invalid " + data.name + ": " + reason);
     },
+
+    // Return json string describing topic 
+    jsonify: function(form_data) {
+        var json_data = {};
+
+        // Pick necessary data only
+        $.each(form_data, function(i, data) {
+            json_data[data.name] = data.value;
+        });
+
+        // Convert into a json string
+        return JSON.stringify(json_data);
+    },
         
     // Send submission request to server, hiding the submission form afterwards
     submit_topic: function() {
@@ -67,15 +80,14 @@ var app = {
             return false;
         }
 
-        // DEBUG: The form data isn't perfect, but the necessary info can be extrapolated for making a topic
-        // It could also be fixed by fiddling with the form
-        console.log(JSON.stringify(form_data));
+        // DEBUG:
+        console.log(this.jsonify(form_data));
         
 //        // Submit data to server (Will report an error without a server)
 //        $.ajax({
 //            type: 'POST',
 //            url: '/topic/submit',
-//            data: JSON.stringify(form_data),
+//            data: form_data,
 //            success: function(form_data) {this.render_topic(form_data)}, 
 //            contentType: "application/json",
 //            dataType: 'json'
