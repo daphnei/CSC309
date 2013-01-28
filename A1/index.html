@@ -4,6 +4,7 @@
         <link rel="stylesheet" type="text/css" href="./style.css">
         <script src="./jquery.js"></script>
         <script src="./app.js"></script>
+        <script src="./comment.js"></script>
     </head>
     <body>
         <div id="frontpage">
@@ -24,7 +25,7 @@
                     <ul class="counts">
                         <li> 9000 points </li>
                         <li> | </li>
-                        <li> <a href="#">253 comments</a> </li>
+                        <li class="comments_section"> <a href="#">253 comments</a> </li>
                     </ul>
                 </li>
                 
@@ -33,7 +34,7 @@
                     <ul class="counts">
                         <li> 75 points </li>
                         <li> | </li>
-                        <li> <a href="#">38 comments</a> </li>
+                        <li class="comments_section"> <a href="#">38 comments</a> </li>
                     </ul>
                 </li>
                 
@@ -42,7 +43,7 @@
                     <ul class="counts">
                         <li> 56 points </li>
                         <li> | </li>
-                        <li> <a href="#">13 comments</a> </li>
+                        <li class="comments_section"> <a href="#">13 comments</a> </li>
                     </ul>
                 </li>
                 
@@ -51,7 +52,7 @@
                     <ul class="counts">
                         <li> 26 points </li>
                         <li> | </li>
-                        <li> <a href="#">2 comments</a> </li>
+                        <li class="comments_section"> <a href="#">2 comments</a> </li>
                     </ul>
                 </li>
                 
@@ -60,7 +61,7 @@
                     <ul class="counts">
                         <li> 0 points </li>
                         <li> | </li>
-                        <li> <a href="#">768 comments</a> </li>
+                        <li class="comments_section"> <a href="#">768 comments</a> </li>
                     </ul>
                 </li>
             </ol>
@@ -72,8 +73,14 @@
 </html>
 
 <script>
-    // All event handlers
+    // Only event handlers
     $('#submit_article').click(function(){
     	app.show_form();
-    });    
+    });
+    
+    $('li.comments_section').click(function(){
+        
+        // Pass the object that was clicked on in order to get the id
+        comment.show_comment_section(this);
+    });
 </script>
