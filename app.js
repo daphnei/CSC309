@@ -3,20 +3,28 @@ var app = {
     
     // Show the submission field on the frontpage
     show_form: function () {
+
         // HTML that creates the submission form
         var form = 
-            '<form name="about_to_submit" id="super">' + 
+            '<form name="about_to_submit">' + 
                 '<label for="url">title:</label>' + 
                 '<input value="" type="text" size="60" name="title" id="submit_form"/>' + 
                 '<label for="url">url:</label>' + 
                 '<input value="" type="text" size="60" name="url" id="url_form"/>' + 
-            
-                // Event handlers will be independent of HTML tags. Onclick will be removed, coming soon...
-                '<input value="Submit" type="button" name="do_submit" id="submit_button" onclick="app.submit_topic();"/>' +
-                '<input value="Cancel" type="button" name="do_cancel" id="submit_cancel" onclick="app.hide_form();"/>' +
+                '<input value="Submit" type="button" name="do_submit" id="submit_button"/>' +
+                '<input value="Cancel" type="button" name="do_cancel" id="submit_cancel"/>' +
             '</form>';
         
         $('#submission_form').html(form);
+        
+        // Bind event handlers for form after its in the DOM
+        $('input#submit_button').click(function(){
+            app.submit_topic();
+        });
+        
+        $('input#submit_cancel').click(function(){
+            app.hide_form();
+        });
     },
     
     // Hide the submission field on the frontpage
@@ -24,40 +32,91 @@ var app = {
         $('#submission_form').html('');
     },
     
-    // Return true if the data present in the field is valid, false otherwise
-    valid_check: function(data) {
-        console.log('Look, I am checking ' + data.value + ' Well, I will be soon.');
-        return true;
+    // Check if the given piece of data is valid.
+    // Returns nothing if valid, otherwise a rejection reason.
+    validate: function(data) {
+        if (!data.value) {
+            return "You didn't fill in the field.";
+        }
+
+        if(data.value.length > 140) {
+            return "Your title is too damn long!";
+        }
+    },
+
+    // Reject the given piece of data for the given reason.
+    reject: function(data, reason) {
+        console.log("Invalid " + data.name + ": " + reason);
+    },
+
+    // Return json string describing topic 
+    jsonify: function(form_data) {
+        var json_data = {};
+
+        // Pick necessary data only
+        $.each(form_data, function(i, data) {
+            json_data[data.name] = data.value;
+        });
+
+        // Convert into a json string
+        return JSON.stringify(json_data);
     },
     
-    // Return a JSON stringyfied string representative of form_data
-    make_into_json: function(form_data) {
-        console.log('Converting form data into JSON... well not yet. It still needs to be implemented');
+    // Return html string containing the structure of new a topic
+    create_topic: function(title, interest_link, total_points, comment_count){
+        // Magic with string manipulation...
     },
     
-    // Send submission request to server. Hide submission form
-    submit_topic: function() {
-        var form_data = $("#submission_form :input").serializeArray();
+    // Place topic created from data on the frontpage
+    render_topic: function(data) {
+        // Use create_topic and then use jQuery to render on DOM...  
+    },
         
-        $.each(form_data, function(i, data){
-            if(!app.valid_check(data)) {
-                console.log('Data not valid');
-                return false;
+    // Send submission request to server, hiding the submission form afterwards
+    submit_topic: function() {
+        
+        // Place all fields into an array, where each element in a JS object
+        var form_data = $('#submission_form :input').serializeArray(),
+                valid = true;
+
+        // Alex: This is here since "each" returns from its own
+        // scope, but we want to return from the scope of submit_topic.
+        // Can anyone come up with a more elegant solution?
+        $.each(form_data, function(i, data) {
+
+            // Find out why the data is invalid
+            rejection_reason = app.validate(data);
+            
+            // Display reason upon failure
+            if (rejection_reason) {
+                app.reject(data, rejection_reason);
+                valid = false;
+                return valid;
             }
         });
+
+        // Submission cannot take place due to invalid data
+        if (!valid) {
+            return false;
+        }
+
+        // DEBUG:
+        console.log(this.jsonify(form_data));
         
-        var json_submission = this.make_into_json(form_data);
-        
-        // Submit data to server (Will report an error )
-//            $.ajax({
-//                type: 'POST',
-//                url: '/topic/submit',
-//                data: json_submission, // Submission in JSON
-//                success: function(data) {},
-//                contentType: "application/json",
-//                dataType: 'json'
-//            });
-//                        
+//        // Submit data to server (Will report an error without a server)
+//        $.ajax({
+//            type: 'POST',
+//            url: '/topic/submit',
+//            data: form_data,
+//            
+//            // The server's response upon successfully sending the topic is the corresponding json string
+//            success: function(data, textStatus, jqXHR) {
+//                this.render_topic(data)
+//            },
+//            contentType: "application/json",
+//            dataType: 'json'
+//        });
+
         this.hide_form();
     }
 };  
