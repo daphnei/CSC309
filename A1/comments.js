@@ -1,8 +1,8 @@
-// Self-contained object that handles all comments
-var comment = {
+//  Global variable comments contains all comment functionality
+var comments = {
     
     // Show the comment section for topic with the matching id
-    show_comment_section: function(section){
+    show: function(section){
         
         // Get the id of the topic containing the comment section
         topic_id = $(section).parent().parent().attr("id");

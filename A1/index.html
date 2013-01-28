@@ -3,8 +3,8 @@
     <head>
         <link rel="stylesheet" type="text/css" href="./style.css">
         <script src="./jquery.js"></script>
-        <script src="./app.js"></script>
-        <script src="./comment.js"></script>
+        <script src="./topics.js"></script>
+        <script src="./comments.js"></script>
     </head>
     <body>
         <div id="frontpage">
@@ -75,12 +75,11 @@
 <script>
     // Only event handlers
     $('#submit_article').click(function(){
-    	app.show_form();
+    	topics.show_form();
     });
     
     $('li.comments_section').click(function(){
-        
         // Pass the object that was clicked on in order to get the id
-        comment.show_comment_section(this);
+        comments.show(this);
     });
 </script>

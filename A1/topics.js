@@ -1,5 +1,5 @@
-// Single global variable app containing all the frontend functionality
-var app = {
+//  Global variable topics contains all topic functionality
+var topics = {
     
     // Show the submission field on the frontpage
     show_form: function () {
@@ -19,11 +19,11 @@ var app = {
         
         // Bind event handlers for form after its in the DOM
         $('input#submit_button').click(function(){
-            app.submit_topic();
+            topics.submit();
         });
         
         $('input#submit_cancel').click(function(){
-            app.hide_form();
+            topics.hide_form();
         });
     },
     
@@ -63,33 +63,33 @@ var app = {
     },
     
     // Return html string containing the structure of new a topic
-    create_topic: function(title, interest_link, total_points, comment_count){
+    create: function(title, interest_link, total_points, comment_count){
         // Magic with string manipulation...
     },
     
     // Place topic created from data on the frontpage
-    render_topic: function(data) {
-        // Use create_topic and then use jQuery to render on DOM...  
+    render: function(data) {
+        // Use create and then use jQuery to render on DOM...  
     },
         
     // Send submission request to server, hiding the submission form afterwards
-    submit_topic: function() {
+    submit: function() {
         
         // Place all fields into an array, where each element in a JS object
         var form_data = $('#submission_form :input').serializeArray(),
                 valid = true;
 
         // Alex: This is here since "each" returns from its own
-        // scope, but we want to return from the scope of submit_topic.
+        // scope, but we want to return from the scope of submit.
         // Can anyone come up with a more elegant solution?
         $.each(form_data, function(i, data) {
 
             // Find out why the data is invalid
-            rejection_reason = app.validate(data);
+            rejection_reason = topics.validate(data);
             
             // Display reason upon failure
             if (rejection_reason) {
-                app.reject(data, rejection_reason);
+                topics.reject(data, rejection_reason);
                 valid = false;
                 return valid;
             }
@@ -101,7 +101,7 @@ var app = {
         }
 
         // DEBUG:
-        console.log(this.jsonify(form_data));
+        console.log(topics.jsonify(form_data));
         
 //        // Submit data to server (Will report an error without a server)
 //        $.ajax({
@@ -111,12 +111,12 @@ var app = {
 //            
 //            // The server's response upon successfully sending the topic is the corresponding json string
 //            success: function(data, textStatus, jqXHR) {
-//                this.render_topic(data)
+//                topics.render(data)
 //            },
 //            contentType: "application/json",
 //            dataType: 'json'
 //        });
 
-        this.hide_form();
+        topics.hide_form();
     }
 };  
