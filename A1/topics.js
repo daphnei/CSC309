@@ -32,24 +32,42 @@ var topics = {
         $('#submission_form').html('');
     },
     
-    // Check if the given piece of data is valid.
-    // Returns nothing if valid, otherwise a rejection reason.
-    validate: function(data) {
-        if (!data.value) {
-            return "You didn't fill in the field.";
+     /**
+     * Check if the given piece of data is valid
+     *
+     * @param {String} field Contains the value at the URL or Title field
+     *
+     * @return {String} Empty string if valid, otherwise a rejection reason
+     */
+    validate: function(field) {
+        var message = '';
+
+        if (!field) {
+            message = "You didn't fill in the field.";
+        } else if(field.length > 140) {
+            message = "Your input is too damn long!";
         }
 
-        if(data.value.length > 140) {
-            return "Your title is too damn long!";
-        }
+        return message;
     },
 
-    // Reject the given piece of data for the given reason.
-    reject: function(data, reason) {
-        console.log("Invalid " + data.name + ": " + reason);
+     /**
+     * Reject the given piece of data for the given reason
+     *
+     * @param {String} name Name of form field that is missing on submit
+     * @param {String} reason Why the topic submission failed
+     */
+    reject: function(name, reason) {
+        console.log("Invalid " + name + ": " + reason);
     },
 
-    // Return json string describing topic 
+     /**
+     * Remove all unecessary key-value pairs from the recollected form data
+     *
+     * @param {Object} form_data  Contains more info besides the necessary data for a topic
+     *
+     * @return {String} JSON string describing topic 
+     */
     jsonify: function(form_data) {
         var json_data = {};
 
@@ -62,12 +80,37 @@ var topics = {
         return JSON.stringify(json_data);
     },
     
-    // Return html string containing the structure of new a topic
-    create: function(title, interest_link, total_points, comment_count){
-        // Magic with string manipulation...
+    /**
+     * Create a new topic from the server data
+     *
+     * @param {Integer} topic_id The unique id for the corresponding topic
+     * @param {String} title The title of the topic. Assume input is 140 characters or less
+     * @param {String} interest_link The link the user wants to share with other individuals via the title
+     * @param {Integer} total_votes The addition of all comment
+     * @param {Integer} comment_count The total amount of comments for the topic 
+     *
+     * @return {String} HTML for topic
+     */
+    create: function(topic_id, title, interest_link, total_votes, comment_count){
+
+        var html_topic = 
+            '<li id=' +  topic_id + ' class="topic">' +
+                '<h3 class="topic_title">' + '<a href="' + interest_link + '">' + title + '</a>' + '</h3>' +
+                '<ul class="counts">' +
+                    '<li>' + total_votes + ' points </li>' +
+                    '<li> | </li>' +
+                    '<li class="comments_section"> <a href="#">' + comment_count + ' comments </a>' + '</li>' +
+                '</ul>' +
+            '</li>';
+
+        return html_topic;
     },
     
-    // Place topic created from data on the frontpage
+    /**
+     * Place topic created from data on the frontpage
+     *
+     * @param {Object} data Contains all the information on how to create a form
+     */
     render: function(data) {
         // Use create and then use jQuery to render on DOM...  
     },
@@ -77,7 +120,8 @@ var topics = {
         
         // Place all fields into an array, where each element in a JS object
         var form_data = $('#submission_form :input').serializeArray(),
-                valid = true;
+                valid = true,
+                rejection_reason = '';
 
         // Alex: This is here since "each" returns from its own
         // scope, but we want to return from the scope of submit.
@@ -85,11 +129,11 @@ var topics = {
         $.each(form_data, function(i, data) {
 
             // Find out why the data is invalid
-            rejection_reason = topics.validate(data);
+            rejection_reason = topics.validate(data.value);
             
             // Display reason upon failure
             if (rejection_reason) {
-                topics.reject(data, rejection_reason);
+                topics.reject(data.name, rejection_reason);
                 valid = false;
                 return valid;
             }
