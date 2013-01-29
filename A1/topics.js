@@ -1,7 +1,13 @@
+/**
+* All Objects in the Global Namespace:
+* topics
+* comments
+*/
+
 //  Global variable topics contains all topic functionality
 var topics = {
     
-    // Show the submission field on the frontpage
+    /** Show the submission form on the frontpage. */
     show_form: function () {
 
         // HTML that creates the submission form
@@ -27,7 +33,7 @@ var topics = {
         });
     },
     
-    // Hide the submission field on the frontpage
+    /** Hide the submission form from the frontpage. */
     hide_form: function () {
         $('#submission_form').html('');
     },
@@ -86,18 +92,18 @@ var topics = {
      * @param {Integer} topic_id The unique id for the corresponding topic
      * @param {String} title The title of the topic. Assume input is 140 characters or less
      * @param {String} interest_link The link the user wants to share with other individuals via the title
-     * @param {Integer} total_votes The addition of all comment
+     * @param {Integer} vote_count The addition of all comment
      * @param {Integer} comment_count The total amount of comments for the topic 
      *
      * @return {String} HTML for topic
      */
-    create: function(topic_id, title, interest_link, total_votes, comment_count){
+    create: function(topic_id, title, interest_link, vote_count, comment_count){
 
         var html_topic = 
             '<li id=' +  topic_id + ' class="topic">' +
                 '<h3 class="topic_title">' + '<a href="' + interest_link + '">' + title + '</a>' + '</h3>' +
                 '<ul class="counts">' +
-                    '<li>' + total_votes + ' points </li>' +
+                    '<li>' + vote_count + ' points </li>' +
                     '<li> | </li>' +
                     '<li class="comments_section"> <a href="#">' + comment_count + ' comments </a>' + '</li>' +
                 '</ul>' +
@@ -109,13 +115,37 @@ var topics = {
     /**
      * Place topic created from data on the frontpage
      *
-     * @param {Object} data Contains all the information on how to create a form
+     * @param {String} data JSON string that contains all the information on how to create a form
      */
     render: function(data) {
-        // Use create and then use jQuery to render on DOM...  
+
+        // Convert JSON string into JavaScript Object
+        var form = JSON.parse(data),
+            new_topic = topics.create(form.root_id, form.content, form.link, form.vote_count, form.comment_count);
+
+        // Use create and then use jQuery to render on DOM...
+        $('ol#content').append(new_topic);
+
+        // Newly rendered topic has no comment bindings
+        topics.rebind(form.root_id);
+    },
+
+    /**
+     * Rebind the comment section of the topic id
+     *
+     * @param {Integer} topic_id The id of the topic that must have its comments rebinded
+     * @this Is the comments section for the topic id
+     */
+    rebind: function(topic_id){
+
+        // Bind the interaction that will show the comments section upon clicking on it
+        $('#' + topic_id + ' ul.counts li.comments_section').click(function(){
+            comments.show(this);
+        });
     },
         
-    // Send submission request to server, hiding the submission form afterwards
+
+    /** Send submission request to server, hiding the submission form afterwards. */
     submit: function() {
         
         // Place all fields into an array, where each element in a JS object
@@ -144,7 +174,7 @@ var topics = {
             return false;
         }
 
-        // DEBUG:
+        // DEBUG: Not sending junk to server
         console.log(topics.jsonify(form_data));
         
 //        // Submit data to server (Will report an error without a server)

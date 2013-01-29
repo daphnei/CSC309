@@ -19,69 +19,37 @@
             
             <div id="submission_form"> </div>
             
-            <ol id="content">
-                <li id=1 class="topic">
-                    <h3 class="topic_title"> <a href="#">Unicorns a myth?</a> </h3>
-                    <ul class="counts">
-                        <li> 9000 points </li>
-                        <li> | </li>
-                        <li class="comments_section"> <a href="#">253 comments</a> </li>
-                    </ul>
-                </li>
-                
-                <li id=2 class="topic">
-                    <h3 class="topic_title"> <a href="#">1001 ways to clean Unicorn Horns</a> </h3>
-                    <ul class="counts">
-                        <li> 75 points </li>
-                        <li> | </li>
-                        <li class="comments_section"> <a href="#">38 comments</a> </li>
-                    </ul>
-                </li>
-                
-                <li id=3 class="topic">
-                    <h3 class="topic_title"> <a href="#">Anyone know how to scrub magical powder off?</a> </h3>                    
-                    <ul class="counts">
-                        <li> 56 points </li>
-                        <li> | </li>
-                        <li class="comments_section"> <a href="#">13 comments</a> </li>
-                    </ul>
-                </li>
-                
-                <li id=4 class="topic">
-                    <h3 class="topic_title"> <a href="#">Bronies and Ponies living peacefully</a> </h3>
-                    <ul class="counts">
-                        <li> 26 points </li>
-                        <li> | </li>
-                        <li class="comments_section"> <a href="#">2 comments</a> </li>
-                    </ul>
-                </li>
-                
-                <li id=5 class="topic">
-                    <h3 class="topic_title"> <a href="#">Pegasi better than Unicorns, TROLOLOL!</a> </h3>
-                    <ul class="counts">
-                        <li> 0 points </li>
-                        <li> | </li>
-                        <li class="comments_section"> <a href="#">768 comments</a> </li>
-                    </ul>
-                </li>
-            </ol>
+            <ol id="content"> </ol>
             
-            <div id="footer">
-            </div>
+            <div id="footer"> </div>
         </div>
     </body>
 </html>
 
+<!-- Only JS Event Handlers. No Global Variables. -->
 <script>
-    // Only event handlers
+
     $('#submit_article').click(function(){
     	topics.show_form();
     });
     
-    $('li.comments_section').click(function(){
-        // Pass the object that was clicked on in order to get the id
-        comments.show(this);
-    });
+    // DEBUG: Creating and appending frontpage topics. Will be removed in production code.
+    $('ol#content').append(topics.create(1, 'Unicorns a myth?', '#', 9000, 253));
+    topics.rebind(1);
 
-    $('ol#content').append(topics.create('6', 'Santa Claus replacing Reindeer with Unicorns?', '#', '0', '0'));
+    $('ol#content').append(topics.create(2, '1001 ways to clean Unicorn Horns', '#', 75, 38));
+    topics.rebind(2);
+
+    $('ol#content').append(topics.create(3, 'Anyone know how to scrub magical powder off?', '#', 56, 13));
+    topics.rebind(3);
+
+    $('ol#content').append(topics.create(4, 'Bronies and Ponies living peacefully', '#', 26, 2));
+    topics.rebind(4);
+
+    $('ol#content').append(topics.create(5, 'Pegasi better than Unicorns, TROLOLOL!', '#', 0, 768));
+    topics.rebind(5);
+
+    $('ol#content').append(topics.create(6, 'Santa Claus replacing Reindeers with Unicorns?', '#', 0, 0));
+    topics.rebind(6);
+
 </script>

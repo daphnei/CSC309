@@ -1,3 +1,9 @@
+/**
+* All Objects in the Global Namespace:
+* topics
+* comments
+*/
+
 //  Global variable comments contains all comment functionality
 var comments = {
 
@@ -37,3 +43,4 @@ var comments = {
 //        });
     }
 };
+ 
