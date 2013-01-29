@@ -126,17 +126,17 @@ var topics = {
         // Use create and then use jQuery to render on DOM...
         $('ol#content').append(new_topic);
 
-        // Newly rendered topic has no comment bindings
-        topics.rebind(form.root_id);
+        // Bind the comment section to clicks
+        topics.bind_comment(form.root_id);
     },
 
     /**
-     * Rebind the comment section of the topic id
+     * Bind the comment section of the topic id
      *
-     * @param {Integer} topic_id The id of the topic that must have its comments rebinded
+     * @param {Integer} topic_id The id of the topic that must have its comments bind_commented
      * @this Is the comments section for the topic id
      */
-    rebind: function(topic_id){
+    bind_comment: function(topic_id){
 
         // Bind the interaction that will show the comments section upon clicking on it
         $('#' + topic_id + ' ul.counts li.comments_section').click(function(){
