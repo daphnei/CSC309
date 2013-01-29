@@ -13,7 +13,7 @@ var nodes = new Array();
 
 http.createServer(onRequest).listen(1234);
 
-function onReqest (req, res) {
+function onRequest (req, res) {
 	// home / get list of topics
 	if (req.url == '/' || req.url == '/topic') {
 		console.log('Hit homepage.');
