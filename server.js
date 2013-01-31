@@ -1,20 +1,13 @@
 http = require('http');
 fs = require('fs');
 path = require('path');
+url = require("url")
 
 MIME_TYPES = {
         '.html': 'text/html',
         '.css': 'text/css',
         '.js': 'text/javascript',
         '.txt': 'text/plain'
-};
-
-HEAD_ITEMS = {
-  '/':'',
-  '/jquery.js':'',
-  '/style.css':'',
-  '/topics.js':'',
-  '/comments.js':'',
 };
 
 var nodes = [];
@@ -25,68 +18,63 @@ var nodes = [];
 http.createServer(function (request, response) {
 	
 	console.log('Request: ' + request.url);
-	
-	// var handleRequest = HEAD_ITEMS[request.url];
-	// handleRequest();
 
-	if (request.url === '/') {
-		fs.readFile('index.html', function (err, data) {
-			if (err) {
-				throw err;
-			}
-			response.writeHead(200, MIME_TYPES['.html']);
-			response.end(data);
-		});
+	var uri = url.parse(request.url).pathname, 
+		filename = path.join(process.cwd(), uri),
+		headers = {},
+		contentType = '';
 
-	} else if (request.url === '/style.css') {
-		fs.readFile('style.css', function (err, data) {
-			if (err) {
-				throw err;
-			}
-			response.writeHead(200, MIME_TYPES['.css']);
-			response.end(data);
-		});
+	// Verify the existence of the url
+	fs.exists(filename, function(exists) {
 
-	} else if (request.url === '/jquery.js') {
-		fs.readFile('jquery.js', function (err, data) {
-			if (err) {
-				throw err;
-			}
-			response.writeHead(200, MIME_TYPES['.js']);
-			response.end(data);
-		});
+		// The file does not exists
+		if(!exists) {
 
-	} else if (request.url === '/topics.js') {
-		fs.readFile('topics.js', function (err, data) {
-			if (err) {
-				throw err;
+			// The url must be an API call
+			if (is_api_call()) {
+				// Do the API call...
+
+			} else { // Otherwise, the url leads to a file that does not exist
+				response.writeHead(404, {"Content-Type": "text/plain"});
+				response.write("404 Not Found\n");
+				response.end();
+				return;
 			}
-			response.writeHead(200, MIME_TYPES['.js']);
-			response.end(data);
-		});
-	} else if(request.url === '/comments.js') {
-		fs.readFile('comments.js', function (err, data) {
-			if (err) {
-				throw err;
+		}
+
+		// index.html and '/' are aliases of one another
+		if (fs.statSync(filename).isDirectory()) {
+			filename += '/index.html';
+		}
+
+		// Serve the file
+		fs.readFile(filename, "binary", function(err, file) {
+			if(err) {        
+				response.writeHead(500, {"Content-Type": "text/plain"});
+				response.write(err + "\n");
+				response.end();
+				return;
 			}
-			response.writeHead(200, MIME_TYPES['.js']);
-			response.end(data);
+
+			// Pick the file's content type
+			contentType = MIME_TYPES[path.extname(filename)];
+
+			// Place the content type into the header
+			if (contentType) {
+				headers["Content-Type"] = contentType;
+			}
+
+			// Send correct header and file to client
+			response.writeHead(200, headers);
+			response.write(file, "binary");
+			response.end();
 		});
-	} else {
-	    response.writeHead(400, MIME_TYPES['.html']);
-	    response.end("Error");
-	}
+	});
 }).listen(4000);
 
-
-function serveFrontpage(request, response) {
-    fs.readFile('index.html', function (err, data) {
-      if (err) {
-        throw err;
-      }
-      response.writeHead(200, MIME_TYPES['.html']);
-      response.end(data);
-    });
+// Not implemented yet
+function is_api_call() {
+	return false;
 }
 
 function serveFile(err, data, response) {
@@ -104,7 +92,7 @@ function insertComment(type, content, root) {
 	node.content = content;
 	node.vote_count = 0;
 	node.id = nodes.length;
-	node.children_ids = new Array();
+	node.children_ids = [];
 	node.root_id = root;
 
 	nodes.push(node);
@@ -117,19 +105,20 @@ function insertTopic(type, description, link) {
 	node.content = description;
 	node.vote_count = 0;
 	node.id = nodes.length;
-	node.children_ids = new Array();
+	node.children_ids = [];
 	node.link = link
 	
 	nodes.push(node);
 }
 
 function upvote(id) {
-	var comment = nodes[id];
+	var comment = nodes[id], root;
+
 	if (comment.type !=  "comment") {
 		console.log("Tried to upvote a non-comment node.");
 		return false;
 	}
 	comment.vote_count++;
-	var root = nodes[comment.root_id];
+	root = nodes[comment.root_id];
 	root.vote_count++;
 }
