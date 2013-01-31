@@ -1,21 +1,41 @@
+/**
+* All Objects in the Global Namespace:
+* topics
+* comments
+*/
+
 //  Global variable comments contains all comment functionality
 var comments = {
 
-	// I don't know what are the parameters of this function, but they will stem from the json data
-	// Return a comment html string
+	/**
+     * I don't know what are the parameters of this function, but they will stem from the json data
+     *
+     * @param {} ITS MISSING THE PARAMETERS
+     *
+     * @return {String} HTML comment
+     */
 	create: function(){ 
 		// Magic with json data and strings...
 	},
 
-	// Place comment created from data on the corresponding node
+	/**
+     * Place comment created from data on the corresponding node
+     *
+     * @param {String} data JSON string that contains all the information on how to create a comment
+     * @param {Integer} node_id Is the node id which the comment is attached to
+     */
 	render: function(data, node_id){
 		// Use create for the html string and jquery to append to the DOM
 	},
     
-    // Show the comment section for topic with the matching id
+	/**
+     * Show the comment section. This routine will decipher from what topic.
+     *
+     * @param {Object} section DOM object of the comment section
+     */
     show: function(section){
         
-        // Get the id of the topic containing the comment section
+        // Get the topic id of the topic containing the comment section
         node_id = $(section).parent().parent().attr("id");
         
         // DEBUG: Proof that clicking on the topic returns the id of the topic
@@ -37,3 +57,4 @@ var comments = {
 //        });
     }
 };
+ 
