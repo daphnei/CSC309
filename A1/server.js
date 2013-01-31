@@ -1,6 +1,7 @@
 http = require('http');
 fs = require('fs');
 path = require('path');
+url = require('url');
 
 MIME_TYPES = {
         '.html': 'text/html',
@@ -14,14 +15,26 @@ var nodes = new Array();
 http.createServer(onRequest).listen(1234);
 
 function onRequest (req, res) {
-	// home / get list of topics
 	if (req.url == '/' || req.url == '/topic') {
+		// home / get list of topics
 		console.log('Hit homepage.');
 		res.writeHead(200, {'Content-Type' : MIME_TYPES['.html']});
 		var buffer = fs.readFile('index.html',
 			function(err, data) { serveFile(err, data, res); } );
-		
 	}
+	else {
+		// For everything else (CSS file, scripts, etc.) assume it's asking for a static file.
+		console.log('Requested file ' + req.url);
+		
+		var urlpath = url.parse(req.url).pathname;
+		res.writeHead(200, {'Content-Type' : MIME_TYPES[path.extname(urlpath)]});
+
+		var filename = path.relative("/", urlpath);
+		var buffer = fs.readFile(filename, function(err, data) { serveFile(err, data, res); });
+	}
+	
+	// TODO:
+
 	// submit topic
 	
 	// submit comment
@@ -29,13 +42,17 @@ function onRequest (req, res) {
 	// specific topic / get list of comments
 	
 	// upvote comment	
-	
 }
 
 function serveFile(err, data, res) {
-	if (err) throw err;
-	res.write(data);
-	res.writeContinue();
+	if (err) {
+		// Overwrite the header with a 404 error.
+		res.writeHead(404, {'Content-Type' : MIME_TYPES['.txt']});
+		res.end("404: file not found.");
+	}
+	else {
+		res.end(data);
+	}
 };
 
 function insertComment(type, content, root) {
