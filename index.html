@@ -28,28 +28,28 @@
 
 <!-- Only JS Event Handlers. No Global Variables. -->
 <script>
+    $(document).ready(function(){
+        $('#submit_article').click(function(){
+            topics.show_form();
+        });
 
-    $('#submit_article').click(function(){
-    	topics.show_form();
+        // DEBUG: Creating and appending frontpage topics. Will be removed in production code.
+        $('ol#content').append(topics.create(1, 'Unicorns a myth?', '#', 9000, 253));
+        topics.bind_comment(1);
+
+        $('ol#content').append(topics.create(2, '1001 ways to clean Unicorn Horns', '#', 75, 38));
+        topics.bind_comment(2);
+
+        $('ol#content').append(topics.create(3, 'Anyone know how to scrub magical powder off?', '#', 56, 13));
+        topics.bind_comment(3);
+
+        $('ol#content').append(topics.create(4, 'Bronies and Ponies living peacefully', '#', 26, 2));
+        topics.bind_comment(4);
+
+        $('ol#content').append(topics.create(5, 'Pegasi better than Unicorns, TROLOLOL!', '#', 0, 768));
+        topics.bind_comment(5);
+
+        $('ol#content').append(topics.create(6, 'Santa Claus replacing Reindeers with Unicorns?', '#', 0, 0));
+        topics.bind_comment(6);
     });
-    
-    // DEBUG: Creating and appending frontpage topics. Will be removed in production code.
-    $('ol#content').append(topics.create(1, 'Unicorns a myth?', '#', 9000, 253));
-    topics.bind_comment(1);
-
-    $('ol#content').append(topics.create(2, '1001 ways to clean Unicorn Horns', '#', 75, 38));
-    topics.bind_comment(2);
-
-    $('ol#content').append(topics.create(3, 'Anyone know how to scrub magical powder off?', '#', 56, 13));
-    topics.bind_comment(3);
-
-    $('ol#content').append(topics.create(4, 'Bronies and Ponies living peacefully', '#', 26, 2));
-    topics.bind_comment(4);
-
-    $('ol#content').append(topics.create(5, 'Pegasi better than Unicorns, TROLOLOL!', '#', 0, 768));
-    topics.bind_comment(5);
-
-    $('ol#content').append(topics.create(6, 'Santa Claus replacing Reindeers with Unicorns?', '#', 0, 0));
-    topics.bind_comment(6);
-
 </script>

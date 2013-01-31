@@ -9,33 +9,92 @@ MIME_TYPES = {
         '.txt': 'text/plain'
 };
 
-var nodes = new Array();
+HEAD_ITEMS = {
+  '/':'',
+  '/jquery.js':'',
+  '/style.css':'',
+  '/topics.js':'',
+  '/comments.js':'',
+};
 
-http.createServer(onRequest).listen(1234);
+var nodes = [];
 
-function onRequest (req, res) {
-	// home / get list of topics
-	if (req.url == '/' || req.url == '/topic') {
-		console.log('Hit homepage.');
-		res.writeHead(200, {'Content-Type' : MIME_TYPES['.html']});
-		var buffer = fs.readFile('index.html',
-			function(err, data) { serveFile(err, data, res); } );
-		
+// Initiate server
+// Request from the client
+// Response from the server
+http.createServer(function (request, response) {
+	
+	console.log('Request: ' + request.url);
+	
+	// var handleRequest = HEAD_ITEMS[request.url];
+	// handleRequest();
+
+	if (request.url === '/') {
+		fs.readFile('index.html', function (err, data) {
+			if (err) {
+				throw err;
+			}
+			response.writeHead(200, MIME_TYPES['.html']);
+			response.end(data);
+		});
+
+	} else if (request.url === '/style.css') {
+		fs.readFile('style.css', function (err, data) {
+			if (err) {
+				throw err;
+			}
+			response.writeHead(200, MIME_TYPES['.css']);
+			response.end(data);
+		});
+
+	} else if (request.url === '/jquery.js') {
+		fs.readFile('jquery.js', function (err, data) {
+			if (err) {
+				throw err;
+			}
+			response.writeHead(200, MIME_TYPES['.js']);
+			response.end(data);
+		});
+
+	} else if (request.url === '/topics.js') {
+		fs.readFile('topics.js', function (err, data) {
+			if (err) {
+				throw err;
+			}
+			response.writeHead(200, MIME_TYPES['.js']);
+			response.end(data);
+		});
+	} else if(request.url === '/comments.js') {
+		fs.readFile('comments.js', function (err, data) {
+			if (err) {
+				throw err;
+			}
+			response.writeHead(200, MIME_TYPES['.js']);
+			response.end(data);
+		});
+	} else {
+	    response.writeHead(400, MIME_TYPES['.html']);
+	    response.end("Error");
 	}
-	// submit topic
-	
-	// submit comment
-	
-	// specific topic / get list of comments
-	
-	// upvote comment	
-	
+}).listen(4000);
+
+
+function serveFrontpage(request, response) {
+    fs.readFile('index.html', function (err, data) {
+      if (err) {
+        throw err;
+      }
+      response.writeHead(200, MIME_TYPES['.html']);
+      response.end(data);
+    });
 }
 
-function serveFile(err, data, res) {
-	if (err) throw err;
-	res.write(data);
-	res.writeContinue();
+function serveFile(err, data, response) {
+	if (err) {
+		throw err;
+	}
+
+	response.end(data);
 };
 
 function insertComment(type, content, root) {
