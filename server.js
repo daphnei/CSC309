@@ -19,32 +19,48 @@ var nodes = [];
 // Response from the server
 http.createServer(function (request, response) {
 	console.log('Request: ' + request.url);
-
+	
 	// Find the full path of the filename
 	var uri = url.parse(request.url).pathname, 
-		filename = path.join(process.cwd(), uri);
+		filename = path.join(process.cwd(), uri),
+		received_data = '';
 
-	// The url is either a file or an api call
-	fs.exists(filename, function(exists) {
+	// Client submits topic or comment
+	if (request.method === 'POST') {
 
-		// The file does not exists
-		if(!exists) {
+		// the body of the POST is JSON payload.  It is raw, not multipart encoded.
+		request.addListener('data', function(chunk) { 
+			received_data += chunk; 
+			console.log(received_data);
+		});
 
-			// The url must be an API call
-			if (is_api_call(request.url)) {
-				perform_api_call(request, response);
+		request.addListener('end', function() {
+			JSON.parse(received_data);
+			response.writeHead(200, {'content-type': 'text/plain' });
+			response.end()
+		});
+	} 
 
-			} else { // Otherwise, the url leads to a file that does not exist
+	// Client requests topic or comment
+	else if(request.method === 'GET') {
+
+	} 
+
+	// Otherwise, the client is just asking for the files that construct the frontpage
+	else {
+		fs.exists(filename, function(exists) {
+
+			if(!exists) { // The file does not exists
 				response.writeHead(404, {"Content-Type": "text/plain"});
 				response.write("404 Not Found\n");
 				response.end();
-			}
-			return;
+				return;
 
-		} else { // Otherwise the file exists
-			serve_file(filename, response);
-		}
-	});
+			} else { // Otherwise the file from the html head exists
+				serve_file(filename, response);
+			}
+		});
+	}
 }).listen(4000);
 
 
@@ -81,19 +97,6 @@ function serve_file(filename, response){
 	});
 }
 
-function perform_api_call(request, response) {
-
-	// Submit a topic
-	if(request.method === 'POST') {
-		console.log('POST request on ' + request.url)
-		
-
-	} else if (request.method === 'GET') { // Get topics or comments
-		console.log('GET request on ' + request.url)
-		// Handle the requests data...
-	}
-}
-
 // Not implemented yet
 function is_api_call(url) {
 	var n = url.charAt(url.length - 1),
@@ -105,14 +108,6 @@ function is_api_call(url) {
 
 	return condition;
 }
-
-function serveFile(err, data, response) {
-	if (err) {
-		throw err;
-	}
-
-	response.end(data);
-};
 
 function insertComment(type, content, root) {
 	var node = {};
