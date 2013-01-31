@@ -177,19 +177,11 @@ var topics = {
         // DEBUG: Not sending junk to server
         console.log(topics.jsonify(form_data));
         
-//        // Submit data to server (Will report an error without a server)
-//        $.ajax({
-//            type: 'POST',
-//            url: '/topic/submit',
-//            data: form_data,
-//            
-//            // The server's response upon successfully sending the topic is the corresponding json string
-//            success: function(data, textStatus, jqXHR) {
-//                topics.render(data)
-//            },
-//            contentType: "application/json",
-//            dataType: 'json'
-//        });
+
+       $.post('/topic/submit', function(data) {
+            console.log('Server replied with ' + data);
+            topics.render(data);
+        });
 
         topics.hide_form();
     }
