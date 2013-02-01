@@ -18,12 +18,11 @@ var nodes = [];
 http.createServer(function (request, response) {
 	console.log('Request: ' + request.url);
 	
-	// Find the full path of the filename
-	var uri = url.parse(request.url).pathname, 
-		filename = path.join(process.cwd(), uri),
-		received_data = '',
-		POST = '',
-		node = null;
+	var uri = url.parse(request.url).pathname, 		// Find the full path ...
+		filename = path.join(process.cwd(), uri), 	// ... of the filename
+		received_data = '', 						// Aggregated received data from client
+		POST = '', 									// Final form of received data
+		node = null; 								// The resulting node from received data
 
 	// Client submits topic or comment
 	if (request.method === 'POST') {
@@ -106,7 +105,6 @@ function is_api_call(url) {
  *
  * @param {String} filename Name of file in server
  * @param {Object} response The server's response to the client
- *
  */
 function serve_file(filename, response){
 	var headers = {},
@@ -138,41 +136,62 @@ function serve_file(filename, response){
 	});
 }
 
+/**
+ * Add a new comment node to all the nodes
+ *
+ * @param {String} type
+ * @param {String} content
+ * @param {String} root
+ */
 function insertComment(type, content, root) {
-	var node = {};
+	var new_node = {};
 	
-	node.type = type;
-	node.content = content;
-	node.vote_count = 0;
-	node.id = nodes.length;
-	node.children_ids = [];
-	node.root_id = root;
+	new_node.type = type;
+	new_node.content = content;
+	new_node.vote_count = 0;
+	new_node.id = nodes.length;
+	new_node.children_ids = [];
+	new_node.root_id = root;
 
-	nodes.push(node);
+	nodes.push(new_node);
 }
 
+/**
+ * Add a new topic node to all the nodes
+ *
+ * @param {String} type
+ * @param {String} description
+ * @param {String} link
+ */
 function insertTopic(type, description, link) {
-	var node = {};
+	var new_node = {};
 	
-	node.type = type;
-	node.content = description;
-	node.vote_count = 0;
-	node.comment_count = 0;
-	node.id = nodes.length;
-	node.children_ids = [];
-	node.link = link
+	new_node.type = type;
+	new_node.content = description;
+	new_node.vote_count = 0;
+	new_node.comment_count = 0;
+	new_node.id = nodes.length;
+	new_node.children_ids = [];
+	new_node.link = link
 	
-	nodes.push(node);
+	nodes.push(new_node);
 }
 
+/**
+ * Upvote the comment
+ *
+ * @param {String} id The id of the upvoted comment
+ */
 function upvote(id) {
-	var comment = nodes[id], root;
+	var comment = nodes[id], 
+		root;
 
 	if (comment.type !=  "comment") {
 		console.log("Tried to upvote a non-comment node.");
 		return false;
 	}
-	comment.vote_count++;
+
+	comment.vote_count = comment.vote_count + 1;
 	root = nodes[comment.root_id];
-	root.vote_count++;
+	root.vote_count = root.vote_count + 1;
 }
