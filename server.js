@@ -58,23 +58,24 @@ http.createServer(function (request, response) {
 		// Check what kind of GET request
 		fs.exists(filename, function(exists) {
 
-			// The html head file does not exists
-			if(!exists) {
-				response.writeHead(404, {'content-type': MIME_TYPES['.txt'] });
-				response.write("404 Not Found\n");
-				response.end();
-
+			// The html head file exists
+			if(exists) {
+				serve_file(filename, response);
 			} 
 			// An API call determined by URL
 			else if (is_api_call(request.url)) {
+
+				// DEBUG:
 				console.log('API Call!');
 
 				// GET STUFF...
 
 			}
-			// Otherwise the file from the html head exists
+			// Not an API call and not an existant file
 			else {
-				serve_file(filename, response);
+				response.writeHead(404, {'content-type': MIME_TYPES['.txt'] });
+				response.write("404 Not Found\n");
+				response.end();
 			}
 		});
 	} 
@@ -84,9 +85,17 @@ http.createServer(function (request, response) {
 		response.end("Error");
 	}
 
-	return;
+	// return;
 }).listen(4000);
 
+
+/**
+ * Verify if the url matches the form of the RESTful API
+ *
+ * @param {String} url Request url from client
+ *
+ * @return {Boolean} true if matches API, false otherwise
+ */
 function is_api_call(url) {
 	var n = url.charAt(url.length - 1),
 		condition = false;
@@ -97,6 +106,13 @@ function is_api_call(url) {
 	return condition;
 }
 
+/**
+ * Serve the files that the client requests
+ *
+ * @param {String} filename Name of file in server
+ * @param {Object} response The server's response to the client
+ *
+ */
 function serve_file(filename, response){
 	var headers = {},
 		content_type = '';
