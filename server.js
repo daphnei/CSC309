@@ -81,8 +81,6 @@ http.createServer(function (request, response) {
 		response.writeHead(500, MIME_TYPES['.txt']);
 		response.end("Error");
 	}
-
-	// return;
 }).listen(4000);
 
 
