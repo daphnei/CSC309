@@ -101,7 +101,7 @@ var topics = {
 
         var html_topic = 
             '<li id=' +  topic_id + ' class="topic">' +
-                '<h3 class="topic_title">' + '<a href="' + interest_link + '">' + title + '</a>' + '</h3>' +
+                '<h3 class="topic_title">' + '<a href="' + topics.linkify(interest_link) + '">' + title + '</a>' + '</h3>' +
                 '<ul class="counts">' +
                     '<li>' + vote_count + ' points </li>' +
                     '<li> | </li>' +
@@ -112,8 +112,27 @@ var topics = {
         return html_topic;
     },
 
-    linkify: function(interest_link){
-        
+    /**
+     * Make url into a valid HTML link
+     *
+     * @param {Integer} comment_count The total amount of comments for the topic 
+     *
+     * @return {String} parsed_url The url that can be used as a link in HTML
+     */
+    linkify: function(url){
+        var url_pattern = '',
+        url_pattern2 = '',
+        parsed_url = '';
+
+        //URLs starting with http://, https://
+        url_pattern = /(\b(https?):\/\/[-A-Z0-9+&amp;@#\/%?=~_|!:,.;]*[-A-Z0-9+&amp;@#\/%=~_|])/ig;
+        parsed_url = url.replace(url_pattern, 'title="$1" href="$1" target="_blank"');
+         
+        //URLs starting with "www."
+        url_pattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+        parsed_url = parsed_url.replace(url_pattern2, '$1http://$2" target="_blank"');
+
+        return parsed_url;
     },
     
     /**

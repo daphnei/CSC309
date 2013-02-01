@@ -14,9 +14,7 @@ MIME_TYPES = {
 // All topics and comments
 var nodes = [];
 
-// Initiate server
-// Request from the client
-// Response from the server
+// Initiate server, request from the client and response from the server
 http.createServer(function (request, response) {
 	console.log('Request: ' + request.url);
 	
@@ -69,7 +67,6 @@ http.createServer(function (request, response) {
 				console.log('API Call!');
 
 				// GET STUFF...
-
 			}
 			// Not an API call and not an existant file
 			else {
