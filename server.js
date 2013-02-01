@@ -23,35 +23,33 @@ http.createServer(function (request, response) {
 	// Find the full path of the filename
 	var uri = url.parse(request.url).pathname, 
 		filename = path.join(process.cwd(), uri),
-		received_data = '';
+		received_data = '',
+		POST = '';
 
 	// Client submits topic or comment
 	if (request.method === 'POST') {
+        request.on('data', function (data) {
+            received_data += data;
+        });
 
-		// the body of the POST is JSON payload.  It is raw, not multipart encoded.
-		request.addListener('data', function(chunk) { 
-			received_data += chunk; 
-			console.log(received_data);
-		});
+        request.on('end', function () {
+            POST = qs.parse(received_data);
+            console.log('Here is what the server got ' + JSON.stringify(POST));
 
-		request.addListener('end', function() {
-			JSON.parse(received_data);
-			response.writeHead(200, {'content-type': 'text/plain' });
-			response.end()
-		});
+            // CREATE THE NODE
+
+            // STORE THE NODE
+
+        }); 
+        // POST IS OUT OF RANGE
 	} 
 
-	// Client requests topic or comment
+	// Client requests topic or comment or asking for the files that construct the frontpage
 	else if(request.method === 'GET') {
-
-	} 
-
-	// Otherwise, the client is just asking for the files that construct the frontpage
-	else {
 		fs.exists(filename, function(exists) {
 
 			if(!exists) { // The file does not exists
-				response.writeHead(404, {"Content-Type": "text/plain"});
+				response.writeHead(404, {'content-type': 'text/plain' });
 				response.write("404 Not Found\n");
 				response.end();
 				return;
@@ -60,6 +58,12 @@ http.createServer(function (request, response) {
 				serve_file(filename, response);
 			}
 		});
+	} 
+
+	// Error
+	else {
+		response.writeHead(500, MIME_TYPES['.txt']);
+		response.end("Error");
 	}
 }).listen(4000);
 
