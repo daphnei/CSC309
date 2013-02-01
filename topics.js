@@ -118,7 +118,6 @@ var topics = {
      * @param {String} data JSON string that contains all the information on how to create a form
      */
     render: function(data) {
-
         // Convert JSON string into JavaScript Object
         var form = JSON.parse(data),
             new_topic = topics.create(form.root_id, form.content, form.link, form.vote_count, form.comment_count);
@@ -185,8 +184,10 @@ var topics = {
            
            // The server's response upon successfully sending the topic is the corresponding json string
            success: function(data, textStatus, jqXHR) {
-                console.log('Server responded with ' + data);
-                topics.render(data);
+                // DEBUG:
+                console.log('Server responded with ' + JSON.stringify(data));
+                
+                topics.render(JSON.stringify(data));
            },
            contentType: "application/json",
            dataType: 'json'

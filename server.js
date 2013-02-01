@@ -24,7 +24,8 @@ http.createServer(function (request, response) {
 	var uri = url.parse(request.url).pathname, 
 		filename = path.join(process.cwd(), uri),
 		received_data = '',
-		POST = '';
+		POST = '',
+		node = null;
 
 	// Client submits topic or comment
 	if (request.method === 'POST') {
@@ -36,23 +37,31 @@ http.createServer(function (request, response) {
             POST = qs.parse(received_data);
             console.log('Here is what the server got ' + JSON.stringify(POST));
 
-            // CREATE THE NODE
+            // Create the node
+            insertTopic("topic", POST["title"], POST["url"])
 
-            // STORE THE NODE
+            // Respond to client. Will trigger success callback on topics.js ajax call
+            // The client is expecting this content type, it MUST match
+			response.writeHead(200, {"Content-Type": "application/json"});
 
-        }); 
-        // POST IS OUT OF RANGE
+			// Send node as a string
+			response.end(JSON.stringify(nodes[nodes.length - 1]));
+
+        }); // POST is out of scope
 	} 
 
 	// Client requests topic or comment or asking for the files that construct the frontpage
 	else if(request.method === 'GET') {
 		fs.exists(filename, function(exists) {
-
 			if(!exists) { // The file does not exists
-				response.writeHead(404, {'content-type': 'text/plain' });
+				response.writeHead(404, {'content-type': MIME_TYPES['.txt'] });
 				response.write("404 Not Found\n");
 				response.end();
-				return;
+
+			} else if (is_api_call(request.url)) { // Or its an API call. We can determine this by URL and request method
+				console.log('API Call!');
+
+				// GET STUFF...
 
 			} else { // Otherwise the file from the html head exists
 				serve_file(filename, response);
@@ -65,8 +74,19 @@ http.createServer(function (request, response) {
 		response.writeHead(500, MIME_TYPES['.txt']);
 		response.end("Error");
 	}
+
+	return;
 }).listen(4000);
 
+function is_api_call(url) {
+	var n = url.charAt(url.length - 1),
+		condition = false;
+
+	if(url === '/topic/submit' || url === '/topic?id=' + n || url === '/reply?pID=' + n){
+		condition = true;
+	}
+	return condition;
+}
 
 function serve_file(filename, response){
 	var headers = {},
@@ -80,7 +100,7 @@ function serve_file(filename, response){
 	// Serve the file
 	fs.readFile(filename, "binary", function(err, file) {
 		if(err) {        
-			response.writeHead(500, {"Content-Type": "text/plain"});
+			response.writeHead(500, {"content-type": MIME_TYPES['.txt']});
 			response.write(err + "\n");
 			response.end();
 			return;
@@ -91,7 +111,7 @@ function serve_file(filename, response){
 
 		// Place the content type into the header
 		if (content_type) {
-			headers["Content-Type"] = content_type;
+			headers["content-type"] = content_type;
 		}
 
 		// Send correct header and file to client
