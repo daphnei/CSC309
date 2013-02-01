@@ -29,10 +29,12 @@ http.createServer(function (request, response) {
 
 	// Client submits topic or comment
 	if (request.method === 'POST') {
+        
+		// Receive the building blocks for the node from the client
         request.on('data', function (data) {
             received_data += data;
         });
-
+        // Build and store the node. Send the constructed node to the client
         request.on('end', function () {
             POST = qs.parse(received_data);
             console.log('Here is what the server got ' + JSON.stringify(POST));
@@ -42,33 +44,40 @@ http.createServer(function (request, response) {
 
             // Respond to client. Will trigger success callback on topics.js ajax call
             // The client is expecting this content type, it MUST match
-			response.writeHead(200, {"Content-Type": "application/json"});
+			response.writeHead(200, {"content-type": "application/json"});
 
-			// Send node as a string
+			// Send the newest node
 			response.end(JSON.stringify(nodes[nodes.length - 1]));
 
         }); // POST is out of scope
 	} 
 
-	// Client requests topic or comment or asking for the files that construct the frontpage
+	// Client requests topic, comment or files that construct the frontend
 	else if(request.method === 'GET') {
+
+		// Check what kind of GET request
 		fs.exists(filename, function(exists) {
-			if(!exists) { // The file does not exists
+
+			// The html head file does not exists
+			if(!exists) {
 				response.writeHead(404, {'content-type': MIME_TYPES['.txt'] });
 				response.write("404 Not Found\n");
 				response.end();
 
-			} else if (is_api_call(request.url)) { // Or its an API call. We can determine this by URL and request method
+			} 
+			// An API call determined by URL
+			else if (is_api_call(request.url)) {
 				console.log('API Call!');
 
 				// GET STUFF...
 
-			} else { // Otherwise the file from the html head exists
+			}
+			// Otherwise the file from the html head exists
+			else {
 				serve_file(filename, response);
 			}
 		});
 	} 
-
 	// Error
 	else {
 		response.writeHead(500, MIME_TYPES['.txt']);
@@ -96,7 +105,6 @@ function serve_file(filename, response){
 	if (fs.statSync(filename).isDirectory()) {
 		filename += '/index.html';
 	}
-
 	// Serve the file
 	fs.readFile(filename, "binary", function(err, file) {
 		if(err) {        
@@ -105,7 +113,6 @@ function serve_file(filename, response){
 			response.end();
 			return;
 		}
-
 		// Pick the file's content type
 		content_type = MIME_TYPES[path.extname(filename)];
 
@@ -113,24 +120,11 @@ function serve_file(filename, response){
 		if (content_type) {
 			headers["content-type"] = content_type;
 		}
-
 		// Send correct header and file to client
 		response.writeHead(200, headers);
 		response.write(file, "binary");
 		response.end();
 	});
-}
-
-// Not implemented yet
-function is_api_call(url) {
-	var n = url.charAt(url.length - 1),
-		condition = false;
-
-	if(url === '/topic/submit' || url === '/topic?id=' + n || url === '/reply?pID=' + n){
-		condition = true;
-	}
-
-	return condition;
 }
 
 function insertComment(type, content, root) {

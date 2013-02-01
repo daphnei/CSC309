@@ -111,6 +111,10 @@ var topics = {
 
         return html_topic;
     },
+
+    linkify: function(interest_link){
+        
+    },
     
     /**
      * Place topic created from data on the frontpage
@@ -186,7 +190,7 @@ var topics = {
            success: function(data, textStatus, jqXHR) {
                 // DEBUG:
                 console.log('Server responded with ' + JSON.stringify(data));
-                
+
                 topics.render(JSON.stringify(data));
            },
            contentType: "application/json",
