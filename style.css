@@ -49,6 +49,10 @@ ul, ul#navigation li {
     height:100%;
 }
 
+.comments_section {
+    font-size:12;
+}
+
 li.topic {
     padding-top:8px;
     padding-bottom:8px;

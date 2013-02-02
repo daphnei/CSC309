@@ -8,24 +8,25 @@
 var comments = {
 
 	/**
-	 * I don't know what are the parameters of this function, but they will stem from the json data
+	 * 
 	 *
-	 * @param {} ITS MISSING THE PARAMETERS
+	 * @param {}
 	 *
 	 * @return {String} HTML comment
 	 */
-	create: function(){ 
-		// Magic with json data and strings...
+	create: function(content, comment_id){ 
+		return '<li id=' + comment_id + '>' + content + '</li>';
 	},
 
 	/**
 	 * Place comment created from data on the corresponding node
 	 *
-	 * @param {String} data JSON string that contains all the information on how to create a comment
-	 * @param {Integer} node_id Is the node id which the comment is attached to
+	 * @param {Object} data Object that contains all the information on how to create a comment
 	 */
-	render: function(data, node_id){
-		// Use create for the html string and jquery to append to the DOM
+	render: function(data, this_comment_section){
+
+		var html_comment = comments.create(data.content, data.id);
+		$(this_comment_section).append(html_comment);
 	},
 	
 	/**
@@ -36,33 +37,58 @@ var comments = {
 	show: function(section) {
 		
 		// Get the topic id of the topic containing the comment section
-		node_id = $(section).parent().parent().attr("id");
+		var node_id = $(section).parent().parent().attr("id"),
+			url = '/topic?id=' + node_id,
+			this_comment_section = 'li#' + node_id + ' ul.comments_section';
+
+		// DEBUG:
+		console.log('Node: ' + node_id);
 		
-		var url = '/topic?id=' + node_id;
 
-		if ($(section).children("div.comments").length > 0) {
-			// Hide the comments section if it exists.
-			$(section).children("div.comments").remove();
+		// The comment section has elements displayed
+		if ($(this_comment_section).children().length > 0) {
+			console.log('Hide comments');
+
+			// Hide the comments section
+			$(this_comment_section).children().remove();
+			
 		}
+
+		// The comment section has no elements displayed
 		else {
-			// And if it doesn't exist, show it.
 
-			$(section).append("<div class='comments'>My unicorn is cooler than yours!</div>");
-			// DEBUG. Later on, the loop below should be used so that it serves the real
-			// comments section rather than a simple one-line div.
+			// DEBUG:
+			console.log('Client tells server: ' + url);
 
-//			// Get comment data from server (will cause error if no server is present)
-//			$.getJSON(url, function(data) {
-//				
-//				// Populate DOM with comment data that came from server.
-//				// Look at each comment attached to the origin node (the topic)
-//				$.each(data, function() {
-//	
-//					// Append comments to the comment section of the topic
-//					// Recursively check whether or not that comment has a comment attached to it
-//					
-//				});
-//			});
+			// Get comment data from server (will cause error if no server is present)
+			$.getJSON(url, function(data) {
+
+				// DEBUG:
+				console.log('Client receives: ' + JSON.stringify(data));
+				console.log('Comment count: ' + data.comment_count);
+
+				// There are comments
+				if(data.comment_count > 0) {
+
+					// DEBUG:
+					console.log('Render comments and comment submission form');
+
+					// Populate DOM with comment data that came from server.
+					// Look at each comment attached to the origin node (the topic)
+					$.each(data, function(index, value) {
+
+						// DEBUG:
+						console.log('Value: ' + value);
+					});
+				}
+				// There are no comments
+				else {
+
+					// DEBUG:
+					console.log('Render comment submission form');
+					comments.render(data, this_comment_section);
+				}
+			});
 		}
 		
 	}

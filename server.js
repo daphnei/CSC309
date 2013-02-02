@@ -22,6 +22,7 @@ http.createServer(function (request, response) {
 		filename = path.join(process.cwd(), uri), 	// ... of the filename
 		received_data = '', 						// Aggregated received data from client
 		POST = '', 									// Final form of received data
+		node_id,									// The node_id from the url request
 		node = null; 								// The resulting node from received data
 
 	// Client submits topic or comment
@@ -33,11 +34,13 @@ http.createServer(function (request, response) {
         });
         // Build and store the node. Send the constructed node to the client
         request.on('end', function () {
+
+        	// Topic submission
             POST = qs.parse(received_data);
             console.log('Here is what the server got ' + JSON.stringify(POST));
 
             // Create the node
-            insertTopic("topic", POST["title"], POST["url"])
+            insert_topic("topic", POST["title"], POST["url"])
 
             // Respond to client. Will trigger success callback on topics.js ajax call
             // The client is expecting this content type, it MUST match
@@ -45,6 +48,8 @@ http.createServer(function (request, response) {
 
 			// Send the newest node
 			response.end(JSON.stringify(nodes[nodes.length - 1]));
+
+			// Comment submission
 
         }); // POST is out of scope
 	} 
@@ -63,9 +68,19 @@ http.createServer(function (request, response) {
 			else if (is_api_call(request.url)) {
 
 				// DEBUG:
-				console.log('API Call!');
+				console.log('API Call: ' + request.url);
 
-				// GET STUFF...
+				// The node which the client is interested in
+				node_id = request.url.charAt(request.url.length - 1);
+
+				// node = find_node(node_id);
+
+				response.writeHead(200, {"content-type": "application/json"});
+				response.end(JSON.stringify({
+					comment_count:0,
+					content:"Sup son",
+					id:"9000"}));
+				// response.end(JSON.stringify(JSON.stringify(node)));
 			}
 			// Not an API call and not an existant file
 			else {
@@ -163,7 +178,7 @@ function insertComment(type, content, root) {
  * @param {String} description
  * @param {String} link
  */
-function insertTopic(type, description, link) {
+function insert_topic(type, description, link) {
 	var new_node = {};
 	
 	new_node.type = type;
