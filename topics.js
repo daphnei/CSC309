@@ -98,6 +98,7 @@ var topics = {
      * @return {String} HTML for topic
      */
     create: function(topic_id, title, interest_link, vote_count, comment_count){
+        console.log(topic_id);
 
         var html_topic = 
             '<li id=' +  topic_id + ' class="topic">' +
@@ -146,13 +147,14 @@ var topics = {
     render: function(data) {
         // Convert JSON string into JavaScript Object
         var form = JSON.parse(data),
-            new_topic = topics.create(form.root_id, form.content, form.link, form.vote_count, form.comment_count);
+            new_topic = topics.create(form.id, form.content, form.link, form.vote_count, form.comment_count);
+            console.log(form);
 
         // Use create and then use jQuery to render on DOM...
         $('ol#content').append(new_topic);
 
         // Bind the comment section to clicks
-        topics.bind_comment(form.root_id);
+        topics.bind_comment(form.id);
     },
 
     /**

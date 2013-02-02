@@ -40,7 +40,7 @@ var comments = {
 		// Display reply form
 		$(this_comment_section).append(reply_form);
 
-		// Bind reply button...
+		// Bind reply button
 		$('input.reply_button').click(function(){
 			reply_data = $('input.reply_field').serializeArray();
 

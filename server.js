@@ -22,7 +22,7 @@ http.createServer(function (request, response) {
 		filename = path.join(process.cwd(), uri), 				// ... of the filename
 		received_data = '', 									// Aggregated received data from client
 		POST = '', 												// Final form of received data
-		node_id = request.url.charAt(request.url.length - 1),	// The node_id from the url request
+		node_id = request.url.charAt(request.url.length - 1),	// The node_id from the url request, if any
 		node = null; 											// The resulting node from received data
 
 	// Client submits topic or comment
@@ -53,6 +53,8 @@ http.createServer(function (request, response) {
 				// Send the newest node
 				response.end(JSON.stringify(nodes[nodes.length - 1]));
             }
+
+            // Else-if, handle the reply
 
             // Error
             else {
