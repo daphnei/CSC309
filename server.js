@@ -18,12 +18,12 @@ var nodes = [];
 http.createServer(function (request, response) {
 	console.log('Request: ' + request.url);
 	
-	var uri = url.parse(request.url).pathname, 		// Find the full path ...
-		filename = path.join(process.cwd(), uri), 	// ... of the filename
-		received_data = '', 						// Aggregated received data from client
-		POST = '', 									// Final form of received data
-		node_id,									// The node_id from the url request
-		node = null; 								// The resulting node from received data
+	var uri = url.parse(request.url).pathname, 					// Find the full path ...
+		filename = path.join(process.cwd(), uri), 				// ... of the filename
+		received_data = '', 									// Aggregated received data from client
+		POST = '', 												// Final form of received data
+		node_id = request.url.charAt(request.url.length - 1),	// The node_id from the url request
+		node = null; 											// The resulting node from received data
 
 	// Client submits topic or comment
 	if (request.method === 'POST') {
@@ -35,22 +35,30 @@ http.createServer(function (request, response) {
         // Build and store the node. Send the constructed node to the client
         request.on('end', function () {
 
-        	// Topic submission
+        	// Topic or reply submission
             POST = qs.parse(received_data);
             console.log('Here is what the server got ' + JSON.stringify(POST));
 
-            // Create the node
-            insert_topic("topic", POST["title"], POST["url"])
+            // The request is for a topic
+            if (request.url === '/topic/submit') {
+				console.log('Handling Topic');
 
-            // Respond to client. Will trigger success callback on topics.js ajax call
-            // The client is expecting this content type, it MUST match
-			response.writeHead(200, {"content-type": "application/json"});
+				// Create the node
+	            insert_topic(POST["title"], POST["url"]);
 
-			// Send the newest node
-			response.end(JSON.stringify(nodes[nodes.length - 1]));
+	            // Respond to client. Will trigger success callback on topics.js ajax call
+	            // The client is expecting this content type, it MUST match
+				response.writeHead(200, {"content-type": "application/json"});
 
-			// Comment submission
+				// Send the newest node
+				response.end(JSON.stringify(nodes[nodes.length - 1]));
+            }
 
+            // Error
+            else {
+				response.writeHead(500, MIME_TYPES['.txt']);
+				response.end("Error");
+            }
         }); // POST is out of scope
 	} 
 
@@ -69,9 +77,6 @@ http.createServer(function (request, response) {
 
 				// DEBUG:
 				console.log('API Call: ' + request.url);
-
-				// The node which the client is interested in
-				node_id = request.url.charAt(request.url.length - 1);
 
 				// node = find_node(node_id);
 
@@ -158,10 +163,10 @@ function serve_file(filename, response){
  * @param {String} content
  * @param {String} root
  */
-function insertComment(type, content, root) {
+function insert_comment(content, root) {
 	var new_node = {};
 	
-	new_node.type = type;
+	new_node.type = 'comment';
 	new_node.content = content;
 	new_node.vote_count = 0;
 	new_node.id = nodes.length;
@@ -174,14 +179,13 @@ function insertComment(type, content, root) {
 /**
  * Add a new topic node to all the nodes
  *
- * @param {String} type
  * @param {String} description
  * @param {String} link
  */
-function insert_topic(type, description, link) {
+function insert_topic(description, link) {
 	var new_node = {};
 	
-	new_node.type = type;
+	new_node.type = 'topic';
 	new_node.content = description;
 	new_node.vote_count = 0;
 	new_node.comment_count = 0;

@@ -8,14 +8,23 @@
 var comments = {
 
 	/**
-	 * 
+	 * Create the html that will render the matching comment id
 	 *
-	 * @param {}
+	 * @param {String} content Content for the comment
+	 * @param {Integer} comment_id Unique identification for the comment node
 	 *
 	 * @return {String} HTML comment
 	 */
 	create: function(content, comment_id){ 
-		return '<li id=' + comment_id + '>' + content + '</li>';
+		html = 
+			'<li id=' + comment_id + '>' + content + 
+				'<form class="reply_form">' + 
+					'<input value="" type="text" size="60" name="reply_content" class="reply_field"/>' +
+					'<input value="Reply" type="button" name="reply_submit" class="reply_button"/>' +
+				'</form>' + 
+			'</li>';
+
+		return html;
 	},
 
 	/**
@@ -25,8 +34,22 @@ var comments = {
 	 */
 	render: function(data, this_comment_section){
 
-		var html_comment = comments.create(data.content, data.id);
-		$(this_comment_section).append(html_comment);
+		var reply_form = comments.create(data.content, data.id),
+			reply_data = [];
+
+		// Display reply form
+		$(this_comment_section).append(reply_form);
+
+		// Bind reply button...
+		$('input.reply_button').click(function(){
+			reply_data = $('input.reply_field').serializeArray();
+
+			// DEBUG
+			console.log('The client will send: ' + topics.jsonify(reply_data));
+        });
+
+        // Send comment to server
+
 	},
 	
 	/**
