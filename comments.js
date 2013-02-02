@@ -48,7 +48,7 @@ var comments = {
 			console.log('The client will send: ' + topics.jsonify(reply_data));
         });
 
-        // Send comment to server
+        // Send comment to server...
 
 	},
 	

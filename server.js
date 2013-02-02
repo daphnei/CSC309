@@ -27,75 +27,12 @@ http.createServer(function (request, response) {
 
 	// Client submits topic or comment
 	if (request.method === 'POST') {
-        
-		// Receive the building blocks for the node from the client
-        request.on('data', function (data) {
-            received_data += data;
-        });
-        // Build and store the node. Send the constructed node to the client
-        request.on('end', function () {
-
-        	// Topic or reply submission
-            POST = qs.parse(received_data);
-            console.log('Here is what the server got ' + JSON.stringify(POST));
-
-            // The request is for a topic
-            if (request.url === '/topic/submit') {
-				console.log('Handling Topic');
-
-				// Create the node
-	            insert_topic(POST["title"], POST["url"]);
-
-	            // Respond to client. Will trigger success callback on topics.js ajax call
-	            // The client is expecting this content type, it MUST match
-				response.writeHead(200, {"content-type": "application/json"});
-
-				// Send the newest node
-				response.end(JSON.stringify(nodes[nodes.length - 1]));
-            }
-
-            // Else-if, handle the reply
-
-            // Error
-            else {
-				response.writeHead(500, MIME_TYPES['.txt']);
-				response.end("Error");
-            }
-        }); // POST is out of scope
+		perform_post_request(request, response, uri, filename, received_data, POST, node_id, node);
 	} 
 
 	// Client requests topic, comment or files that construct the frontend
 	else if(request.method === 'GET') {
-
-		// Check what kind of GET request
-		fs.exists(filename, function(exists) {
-
-			// The html head file exists
-			if(exists) {
-				serve_file(filename, response);
-			} 
-			// An API call determined by URL
-			else if (is_api_call(request.url)) {
-
-				// DEBUG:
-				console.log('API Call: ' + request.url);
-
-				// node = find_node(node_id);
-
-				response.writeHead(200, {"content-type": "application/json"});
-				response.end(JSON.stringify({
-					comment_count:0,
-					content:"Sup son",
-					id:"9000"}));
-				// response.end(JSON.stringify(JSON.stringify(node)));
-			}
-			// Not an API call and not an existant file
-			else {
-				response.writeHead(404, {'content-type': MIME_TYPES['.txt'] });
-				response.write("404 Not Found\n");
-				response.end();
-			}
-		});
+		perform_get_request(request, response, uri, filename, received_data, POST, node_id, node);
 	} 
 	// Error
 	else {
@@ -104,6 +41,84 @@ http.createServer(function (request, response) {
 	}
 }).listen(4000);
 
+
+
+
+
+
+function perform_get_request(request, response, uri, filename, received_data, POST, node_id, node) {
+
+	// Check what kind of GET request
+	fs.exists(filename, function(exists) {
+
+		// The html head file exists
+		if(exists) {
+			serve_file(filename, response);
+		} 
+		// An API call determined by URL
+		else if (is_api_call(request.url)) {
+
+			// DEBUG:
+			console.log('API Call: ' + request.url);
+
+			// node = find_node(node_id);
+
+			response.writeHead(200, {"content-type": "application/json"});
+			response.end(JSON.stringify({
+				comment_count:0,
+				content:"Sup son",
+				id:"9000"}));
+
+			// HANDLE NO COMMENT NODES
+
+			// response.end(JSON.stringify(JSON.stringify(node)));
+		}
+		// Not an API call and not an existant file
+		else {
+			response.writeHead(404, {'content-type': MIME_TYPES['.txt'] });
+			response.write("404 Not Found\n");
+			response.end();
+		}
+	});
+}
+
+function perform_post_request(request, response, uri, filename, received_data, POST, node_id, node) {
+
+	// Receive the building blocks for the node from the client
+	request.on('data', function (data) {
+	    received_data += data;
+	});
+	// Build and store the node. Send the constructed node to the client
+	request.on('end', function () {
+
+		// Topic or reply submission
+	    POST = qs.parse(received_data);
+	    console.log('Here is what the server got ' + JSON.stringify(POST));
+
+	    // The request is for a topic
+	    if (request.url === '/topic/submit') {
+			console.log('Handling Topic');
+
+			// Create the node
+	        insert_topic(POST["title"], POST["url"]);
+
+	        // Respond to client. Will trigger success callback on topics.js ajax call
+	        // The client is expecting this content type, it MUST match
+			response.writeHead(200, {"content-type": "application/json"});
+
+			// Send the newest node
+			response.end(JSON.stringify(nodes[nodes.length - 1]));
+	    }
+
+	    // Else-if, handle the reply
+
+	    // Error
+	    else {
+			response.writeHead(500, MIME_TYPES['.txt']);
+			response.end("Error");
+	    }
+	}); // POST is out of scope
+}
 
 /**
  * Verify if the url matches the form of the RESTful API
