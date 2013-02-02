@@ -105,7 +105,10 @@ var topics = {
                 '<ul class="counts">' +
                     '<li>' + vote_count + ' points </li>' +
                     '<li> | </li>' +
-                    '<li class="comments_section"> <a href="#">' + comment_count + ' comments </a>' + '</li>' +
+                    '<li class="show_comments">' + '<a href="#">' + comment_count + ' comments </a>' + '</li>' +
+                '</ul>' +
+                '<ul class="comments_section">' +
+
                 '</ul>' +
             '</li>';
 
@@ -161,7 +164,7 @@ var topics = {
     bind_comment: function(topic_id){
 
         // Bind the interaction that will show the comments section upon clicking on it
-        $('#' + topic_id + ' ul.counts li.comments_section').click(function(){
+        $('#' + topic_id + ' ul.counts li.show_comments').click(function(){
             comments.show(this);
         });
     },
