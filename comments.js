@@ -46,10 +46,10 @@ var comments = {
 
 			// DEBUG
 			console.log('The client will send: ' + topics.jsonify(reply_data));
+
+			// Send comment to server...
+
         });
-
-        // Send comment to server...
-
 	},
 	
 	/**
@@ -102,6 +102,8 @@ var comments = {
 
 						// DEBUG:
 						console.log('Value: ' + value);
+
+						// Render all comments
 					});
 				}
 				// There are no comments
