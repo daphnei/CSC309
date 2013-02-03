@@ -2,9 +2,8 @@ var NODES = [];
 
 // Handle module for server
 module.exports = {
-	get_request: function(request, response, uri, filename, received_data, POST, node){
-		var comment_struct = {},
-			node_id = request.url.charAt(request.url.length - 1);
+	get_request: function(request, response, uri, filename, received_data, POST, root_id, temp_node){
+		var comment_struct = {};
 
 		// Check what kind of GET request
 		fs.exists(filename, function(exists) {
@@ -15,24 +14,24 @@ module.exports = {
 			} 
 			
 			// Get comment for n
-			else if (request.url === '/topic?id=' + node_id) {
+			else if (request.url === '/topic?id=' + root_id) {
 
 				// DEBUG:
-				console.log('Getting Comments');
+				console.log('Fetch Comments under ' + root_id);
 
 				// Find the node that the client is interested in
-				node = help.find_node(node_id);
+				temp_node = help.find_node(root_id);
 
 				response.writeHead(200, {"content-type": "application/json"});
 
 				// Find comments for node
-				if (node.comment_count > 0) {
+				if (temp_node.comment_count > 0) {
 
 					// Do something to comment_struct...
 					// Still have to figure out how to create comment structure
 				}
 				else {
-					comment_struct = help.insert_comment('', node_id);
+					comment_struct = help.insert_comment('', root_id);
 				}
 
 				// If has children send each child, and if those children have children do so as well
@@ -47,8 +46,7 @@ module.exports = {
 			}
 		});
 	},
-	post_request: function(request, response, uri, filename, received_data, POST, node_id, node){
-		node_id = request.url.charAt(request.url.length - 1);
+	post_request: function(request, response, uri, filename, received_data, POST, root_id, temp_node){
 
 		// Receive the building blocks for the node from the client
 		request.on('data', function (data) {
@@ -59,28 +57,30 @@ module.exports = {
 
 			// Topic or reply submission
 		    POST = qs.parse(received_data);
-		    console.log('Here is what the server got ' + JSON.stringify(POST));
+
+		    // DEBUG:
+		    console.log('Server Received:' + JSON.stringify(POST));
 
 		    // The request is for a topic
 		    if (request.url === '/topic/submit') {
-				console.log('Creating Topic');
+				console.log('Create new topic');
 
 				// Create the node
-		        node = help.insert_topic(POST["title"], POST["url"]);
+		        temp_node = help.insert_topic(POST["title"], POST["url"]);
 
 		        // Respond to client. Will trigger success callback on topics.js ajax call
 		        // The client is expecting this content type, it MUST match
 				response.writeHead(200, {"content-type": "application/json"});
 
 				// Send the newest node
-				response.end(JSON.stringify(node));
+				response.end(JSON.stringify(temp_node));
 		    }
 
 		    // The request is for a comment reply
-		    else if (request.url === '/reply?pID=' + node_id) {
-		    	console.log('Creating Reply');
+		    else if (request.url === '/reply?pID=' + root_id) {
+		    	console.log('Create new comment under ' + root_id);
 
-		    	// Do magic
+		    	help.insert_comment(content, root);
 		    }
 
 		    // Error
@@ -100,20 +100,22 @@ var help = {
 	/**
 	 * Find the node matching the id
 	 *
-	 * @param {String} node_id
+	 * @param {String} root_id
 	 *
 	 * @return {Object} node
 	 */
-	find_node: function(node_id) {
-		console.log('Looking for ' + node_id);
+	find_node: function(root_id) {
+		console.log('Looking for node ' + root_id);
 
 		for (var i = NODES.length - 1; i >= 0; i--) {
 
-			if(NODES[i].id == node_id) {
-				console.log('Sending ' + NODES[i].id);
+			if(NODES[i].id == root_id) {
+				console.log('Found node ' + NODES[i].id);
 				return NODES[i];
 			}
 		}
+
+		console.log('Did not find node ' + root_id);
 		return {}
 	},
 	
@@ -160,7 +162,7 @@ var help = {
 	 * @param {String} content
 	 * @param {String} root
 	 */
-	insert_comment: function(content, root) {
+	insert_comment: function(content, root_id) {
 		var new_node = {};
 		
 		new_node.type = 'comment';
@@ -169,7 +171,7 @@ var help = {
 		new_node.comment_count = 0;
 		new_node.id = NODES.length;
 		new_node.children_ids = [];
-		new_node.root_id = root;
+		new_node.root_id = root_id;
 		NODES.push(new_node);
 
 		return new_node;

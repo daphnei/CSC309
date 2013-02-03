@@ -47,7 +47,7 @@ var comments = {
 			reply_data = $('input.reply_field').serializeArray();
 
 			// DEBUG
-			console.log('The client will send: ' + topics.jsonify(reply_data));
+			console.log('Client sends: ' + topics.jsonify(reply_data));
 
 			// Send comment to server
 	       $.ajax({
@@ -58,7 +58,7 @@ var comments = {
 	           // The server's response upon successfully sending the topic is the corresponding json string
 	           success: function(data, textStatus, jqXHR) {
 	                // DEBUG:
-	                console.log('Server responded with ' + JSON.stringify(data));
+	                console.log('Client receives: ' + JSON.stringify(data));
 	           },
 	           contentType: "application/json",
 	           dataType: 'json'
@@ -80,12 +80,12 @@ var comments = {
 			clean_data = {};
 
 		// DEBUG:
-		console.log('Node: ' + node_id);
+		console.log('Show node: ' + node_id);
 		
 
 		// The comment section has elements displayed
 		if ($(this_comment_section).children().length > 0) {
-			console.log('Hide comments');
+			console.log('Hide comments for node' + node_id);
 
 			// Hide the comments section
 			$(this_comment_section).children().remove();
@@ -94,17 +94,17 @@ var comments = {
 		// The comment section has no elements displayed
 		else {
 
-			// DEBUG:
-			console.log('Client tells server: ' + url);
-
 			// Get comment data from server (will cause error if no server is present)
 			$.getJSON(url, function(data) {
+
+				// DEBUG:
+				console.log('Client sends: ' + url);
 
 				// There are comments
 				if(data.comment_count > 0) {
 
 					// DEBUG:
-					console.log('Render all comments and comment submission form');
+					console.log('Show comments and reply form');
 
 					// Do some magic
 
@@ -113,7 +113,7 @@ var comments = {
 				else {
 
 					// DEBUG:
-					console.log('Render no comment submission form');
+					console.log('Show reply form');
 
 					// Render no comment and submission form
 					comments.render(data, node_id, this_comment_section);

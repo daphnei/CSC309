@@ -23,17 +23,25 @@ http.createServer(function (request, response) {
 		filename = path.join(process.cwd(), uri), 				// ... of the filename
 		received_data = '', 									// Aggregated received data from client
 		POST = '', 												// Final form of received data
-		node_id = request.url.charAt(request.url.length - 1),	// The node_id from the url request, if any
-		node = null; 											// The resulting node from received data
+		root_id = request.url.charAt(request.url.length - 1),	// The node_id from the url request, if any
+		temp_node = null; 										// The resulting node from received data
 
 	// Client submits topic or comment
 	if (request.method === 'POST') {
-		server_handle.post_request(request, response, uri, filename, received_data, POST, node);
+
+		// DEBUG:
+		console.log('Handle POST request: ' + request.url);
+
+		server_handle.post_request(request, response, uri, filename, received_data, POST, root_id, temp_node);
 	} 
 
 	// Client requests topic, comment or files that construct the frontend
 	else if(request.method === 'GET') {
-		server_handle.get_request(request, response, uri, filename, received_data, POST, node_id, node);
+
+		// DEBUG:
+		console.log('Handle GET request: ' + request.url);
+
+		server_handle.get_request(request, response, uri, filename, received_data, POST, root_id, temp_node);
 	} 
 	// Error
 	else {

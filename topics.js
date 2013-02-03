@@ -49,9 +49,9 @@ var topics = {
         var message = '';
 
         if (!field) {
-            message = "You didn't fill in the field.";
+            message = "Didn't fill in the field.";
         } else if(field.length > 140) {
-            message = "Your input is too damn long!";
+            message = "Input is too damn long!";
         }
 
         return message;
@@ -98,7 +98,7 @@ var topics = {
      * @return {String} HTML for topic
      */
     create: function(topic_id, title, interest_link, vote_count, comment_count){
-        console.log(topic_id);
+        console.log('Creating topic for node: ' + topic_id);
 
         var html_topic = 
             '<li id=' +  topic_id + ' class="topic">' +
@@ -145,10 +145,10 @@ var topics = {
      * @param {String} data JSON string that contains all the information on how to create a form
      */
     render: function(data) {
+        
         // Convert JSON string into JavaScript Object
         var form = JSON.parse(data),
             new_topic = topics.create(form.id, form.content, form.link, form.vote_count, form.comment_count);
-            console.log(form);
 
         // Use create and then use jQuery to render on DOM...
         $('ol#content').append(new_topic);
@@ -201,8 +201,8 @@ var topics = {
             return false;
         }
 
-        // DEBUG: Not sending junk to server
-        console.log(topics.jsonify(form_data));
+        // DEBUG:
+        console.log('Client sends: ' + topics.jsonify(form_data));
         
        // Submit data to server (Will report an error without a server)
        $.ajax({
@@ -213,7 +213,7 @@ var topics = {
            // The server's response upon successfully sending the topic is the corresponding json string
            success: function(data, textStatus, jqXHR) {
                 // DEBUG:
-                console.log('Server responded with ' + JSON.stringify(data));
+                console.log('Client receives: ' + JSON.stringify(data));
 
                 topics.render(JSON.stringify(data));
            },
