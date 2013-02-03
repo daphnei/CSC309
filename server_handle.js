@@ -2,9 +2,9 @@ var NODES = [];
 
 // Handle module for server
 module.exports = {
-	get_request: function(request, response, uri, filename, received_data, POST, node_id, node){
-		var n = request.url.charAt(request.url.length - 1),
-				comment_struct = {};
+	get_request: function(request, response, uri, filename, received_data, POST, node){
+		var comment_struct = {},
+			node_id = request.url.charAt(request.url.length - 1);
 
 		// Check what kind of GET request
 		fs.exists(filename, function(exists) {
@@ -15,10 +15,10 @@ module.exports = {
 			} 
 			
 			// Get comment for n
-			else if (request.url === '/topic?id=' + n) {
+			else if (request.url === '/topic?id=' + node_id) {
 
 				// DEBUG:
-				console.log('Getting Comments');;
+				console.log('Getting Comments');
 
 				// Find the node that the client is interested in
 				node = help.find_node(node_id);
@@ -27,7 +27,11 @@ module.exports = {
 
 				// Find comments for node
 				if (node.comment_count > 0) {
-					console.log('There are comments');
+
+					// Do something to comment_struct...
+				}
+				else {
+					comment_struct = help.insert_comment('', node_id);
 				}
 
 				// If has children send each child, and if those children have children do so as well
@@ -43,6 +47,8 @@ module.exports = {
 		});
 	},
 	post_request: function(request, response, uri, filename, received_data, POST, node_id, node){
+		node_id = request.url.charAt(request.url.length - 1);
+
 		// Receive the building blocks for the node from the client
 		request.on('data', function (data) {
 		    received_data += data;
@@ -59,19 +65,21 @@ module.exports = {
 				console.log('Creating Topic');
 
 				// Create the node
-		        help.insert_topic(POST["title"], POST["url"]);
+		        node = help.insert_topic(POST["title"], POST["url"]);
 
 		        // Respond to client. Will trigger success callback on topics.js ajax call
 		        // The client is expecting this content type, it MUST match
 				response.writeHead(200, {"content-type": "application/json"});
 
 				// Send the newest node
-				response.end(JSON.stringify(NODES[NODES.length - 1]));
+				response.end(JSON.stringify(node));
 		    }
 
-		    // Else-if, handle posting the reply
-		    else if (request.url === '/reply?pID=' + n) {
+		    // The request is for a comment reply
+		    else if (request.url === '/reply?pID=' + node_id) {
 		    	console.log('Creating Reply');
+
+		    	// Do magic
 		    }
 
 		    // Error
@@ -96,14 +104,13 @@ var help = {
 	 * @return {Object} node
 	 */
 	find_node: function(node_id) {
-		var node = {};
-
+		console.log('Looking for ' + node_id);
 		for (var i = NODES.length - 1; i >= 0; i--) {
-			if(NODES[i].id === node_id) {
-				node = NODES[i];
+			if(NODES[i].id == node_id) {
+				return NODES[i];
 			}
 		}
-		return node;
+		return {}
 	},
 	
 	/**
@@ -155,11 +162,13 @@ var help = {
 		new_node.type = 'comment';
 		new_node.content = content;
 		new_node.vote_count = 0;
+		new_node.comment_count = 0;
 		new_node.id = NODES.length;
 		new_node.children_ids = [];
 		new_node.root_id = root;
-
 		NODES.push(new_node);
+
+		return new_node;
 	},
 
 	/**
@@ -180,5 +189,7 @@ var help = {
 		new_node.link = link
 		
 		NODES.push(new_node);
+
+		return new_node;
 	}
 };

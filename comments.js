@@ -34,10 +34,10 @@ var comments = {
 	 *
 	 * @param {Object} data Object that contains all the information on how to create a comment
 	 */
-	render: function(data, this_comment_section){
+	render: function(data, node_id, this_comment_section){
 
-		var reply_form = comments.create(data.content, data.id),
-			reply_data = [];
+		var reply_data = [],
+			reply_form = comments.create(data.content, data.id);
 
 		// Display reply form
 		$(this_comment_section).append(reply_form);
@@ -49,8 +49,20 @@ var comments = {
 			// DEBUG
 			console.log('The client will send: ' + topics.jsonify(reply_data));
 
-			// Send comment to server...
-
+			// Send comment to server
+	       $.ajax({
+	           type: 'POST',
+	           url: '/reply?pID=' + node_id,
+	           data: reply_data,
+	           
+	           // The server's response upon successfully sending the topic is the corresponding json string
+	           success: function(data, textStatus, jqXHR) {
+	                // DEBUG:
+	                console.log('Server responded with ' + JSON.stringify(data));
+	           },
+	           contentType: "application/json",
+	           dataType: 'json'
+	       });
         });
 	},
 	
@@ -64,7 +76,8 @@ var comments = {
 		// Get the topic id of the topic containing the comment section
 		var node_id = $(section).parent().parent().attr("id"),
 			url = '/topic?id=' + node_id,
-			this_comment_section = 'li#' + node_id + ' ul.comments_section';
+			this_comment_section = 'li#' + node_id + ' ul.comments_section',
+			clean_data = {};
 
 		// DEBUG:
 		console.log('Node: ' + node_id);
@@ -76,7 +89,6 @@ var comments = {
 
 			// Hide the comments section
 			$(this_comment_section).children().remove();
-			
 		}
 
 		// The comment section has no elements displayed
@@ -88,36 +100,28 @@ var comments = {
 			// Get comment data from server (will cause error if no server is present)
 			$.getJSON(url, function(data) {
 
-				// DEBUG:
-				console.log('Client receives: ' + JSON.stringify(data));
-				console.log('Comment count: ' + data.comment_count);
+				clean_data = JSON.parse(data);
 
 				// There are comments
-				if(data.comment_count > 0) {
+				if(clean_data.comment_count > 0) {
 
 					// DEBUG:
-					console.log('Render comments and comment submission form');
+					console.log('Render all comments and comment submission form');
 
-					// Populate DOM with comment data that came from server.
-					// Look at each comment attached to the origin node (the topic)
-					$.each(data, function(index, value) {
+					// Do some magic
 
-						// DEBUG:
-						console.log('Value: ' + value);
-
-						// Render all comments
-					});
 				}
 				// There are no comments
 				else {
 
 					// DEBUG:
-					console.log('Render comment submission form');
-					comments.render(data, this_comment_section);
+					console.log('Render no comment submission form');
+
+					// Render no comment and submission form
+					comments.render(clean_data, node_id, this_comment_section);
 				}
 			});
 		}
-		
 	}
 };
  

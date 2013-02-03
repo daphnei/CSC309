@@ -28,7 +28,7 @@ http.createServer(function (request, response) {
 
 	// Client submits topic or comment
 	if (request.method === 'POST') {
-		server_handle.post_request(request, response, uri, filename, received_data, POST, node_id, node);
+		server_handle.post_request(request, response, uri, filename, received_data, POST, node);
 	} 
 
 	// Client requests topic, comment or files that construct the frontend
