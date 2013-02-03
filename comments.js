@@ -100,10 +100,8 @@ var comments = {
 			// Get comment data from server (will cause error if no server is present)
 			$.getJSON(url, function(data) {
 
-				clean_data = JSON.parse(data);
-
 				// There are comments
-				if(clean_data.comment_count > 0) {
+				if(data.comment_count > 0) {
 
 					// DEBUG:
 					console.log('Render all comments and comment submission form');
@@ -118,7 +116,7 @@ var comments = {
 					console.log('Render no comment submission form');
 
 					// Render no comment and submission form
-					comments.render(clean_data, node_id, this_comment_section);
+					comments.render(data, node_id, this_comment_section);
 				}
 			});
 		}

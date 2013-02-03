@@ -29,13 +29,14 @@ module.exports = {
 				if (node.comment_count > 0) {
 
 					// Do something to comment_struct...
+					// Still have to figure out how to create comment structure
 				}
 				else {
 					comment_struct = help.insert_comment('', node_id);
 				}
 
 				// If has children send each child, and if those children have children do so as well
-				response.end(JSON.stringify(JSON.stringify(comment_struct)));
+				response.end(JSON.stringify(comment_struct));
 			}
 
 			// Not an API call and not an existant file
@@ -105,8 +106,11 @@ var help = {
 	 */
 	find_node: function(node_id) {
 		console.log('Looking for ' + node_id);
+
 		for (var i = NODES.length - 1; i >= 0; i--) {
+
 			if(NODES[i].id == node_id) {
+				console.log('Sending ' + NODES[i].id);
 				return NODES[i];
 			}
 		}
