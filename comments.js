@@ -16,8 +16,10 @@ var comments = {
 	 * @return {String} HTML comment
 	 */
 	create: function(content, comment_id){ 
+		var new_content = content ? content : '';
+
 		html = 
-			'<li id=' + comment_id + '>' + content + 
+			'<li id=' + comment_id + '>' + new_content + 
 				'<form class="reply_form">' + 
 					'<input value="" type="text" size="60" name="reply_content" class="reply_field"/>' +
 					'<input value="Reply" type="button" name="reply_submit" class="reply_button"/>' +
