@@ -80,7 +80,9 @@ module.exports = {
 		    else if (request.url === '/reply?pID=' + root_id) {
 		    	console.log('Create new comment under ' + root_id);
 
-		    	help.insert_comment(content, root);
+		    	temp_node = help.insert_comment(content, root);
+
+		    	// Send to client
 		    }
 
 		    // Error
@@ -163,7 +165,8 @@ var help = {
 	 * @param {String} root
 	 */
 	insert_comment: function(content, root_id) {
-		var new_node = {};
+		var new_node = {},
+			temp_root = null;
 		
 		new_node.type = 'comment';
 		new_node.content = content;
@@ -172,6 +175,17 @@ var help = {
 		new_node.id = NODES.length;
 		new_node.children_ids = [];
 		new_node.root_id = root_id;
+
+		// Update root to reflect changes
+		temp_root = help.find_node(new_node.root_id);
+		temp_root.children_ids.push(new_node.id);
+		temp_root.comment_count = temp_root.children_ids.length;
+
+		// DEBUG: Pointers confuse me from time to time
+		if (temp_root === help.find_node(new_node.root_id)) {
+			console.log('Root ' + temp_root.id + ' reflects comment ' + new_node.id + ' addition');
+		}
+
 		NODES.push(new_node);
 
 		return new_node;
