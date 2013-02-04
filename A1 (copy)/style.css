@@ -1,0 +1,89 @@
+a:link {color:black;}
+a:visited {color:black;}
+a:hover {color:black;}
+a:active {color:black;}
+
+body {
+    font-family: helvetica neue;
+}
+
+#frontpage {
+    margin-right: auto;
+    margin-left: auto;
+    width:100%;
+    background-color:#F2F2F2;
+}
+
+#header {
+    padding-top:15px;
+    height:45px;
+    background-color:#AB2017;
+}
+
+#site_name {
+    display: inline;
+    margin-left:25px;
+    font-weight:700;
+}
+
+#site_name a {
+    color: #FFFFFF;
+    text-decoration:none;
+}
+
+ul, ul#navigation li {
+    display: inline;
+}
+
+#submit_article {
+    float:right;
+    margin-top:7px;
+    margin-right:24px;
+    color:#FFFF00;
+    text-decoration:none;
+    font-weight:500;
+    font-size:12pt;
+}
+
+#content {
+    height:100%;
+}
+
+li.topic {
+    padding-top:8px;
+    padding-bottom:8px;
+}
+
+li.topic h3 {
+    margin:0;
+    padding:0;
+}
+
+li.topic a {
+    text-decoration:none;
+}
+
+.topic_title {
+    font-weight:400;
+}
+
+.odd {
+    background-color:#FFFFFF;
+}
+
+ul.counts {
+    margin: 0;
+    padding: 0;
+    font-size:9pt;
+}
+
+ul.counts li {
+    display: inline;
+    list-style-type:none;
+}
+
+#footer {
+    height:30px;
+    background-color:#AB2017;
+    color: #FFFFFF;
+}
