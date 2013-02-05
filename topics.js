@@ -166,7 +166,7 @@ var topics = {
     bind_comment: function(topic_id){
 
         // Bind the interaction that will show the comments section upon clicking on it
-        $('#' + topic_id + ' ul.counts li.show_comments').click(function(){
+        $('#' + topic_id).find('ul.counts').find('li.show_comments').click(function(){
             comments.show(this);
         });
     },

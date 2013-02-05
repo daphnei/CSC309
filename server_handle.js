@@ -4,7 +4,7 @@ var NODES = [];
 module.exports = {
 	get_request: function(request, response, filename, received_data, POST, root_id, temp_node){
 		
-		// Comment node that will be returned to the client
+		// Comment node that will be given to the client
 		var comment_node = {};
 
 		// Check what kind of GET request
@@ -34,6 +34,8 @@ module.exports = {
 
 				}
 				else {
+
+					// The first comment is empty
 					comment_node = help.insert_comment('', root_id);
 				}
 
