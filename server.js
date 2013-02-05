@@ -32,7 +32,7 @@ http.createServer(function (request, response) {
 		// DEBUG:
 		console.log('Handle POST request: ' + request.url);
 
-		server_handle.post_request(request, response, uri, filename, received_data, POST, root_id, temp_node);
+		server_handle.post_request(request, response, filename, received_data, POST, root_id, temp_node);
 	} 
 
 	// Client requests topic, comment or files that construct the frontend
@@ -41,7 +41,7 @@ http.createServer(function (request, response) {
 		// DEBUG:
 		console.log('Handle GET request: ' + request.url);
 
-		server_handle.get_request(request, response, uri, filename, received_data, POST, root_id, temp_node);
+		server_handle.get_request(request, response, filename, received_data, POST, root_id, temp_node);
 	} 
 	// Error
 	else {

@@ -37,7 +37,8 @@ var comments = {
 	render: function(data, node_id, this_comment_section){
 
 		var reply_data = [],
-			reply_form = comments.create(data.content, data.id);
+			reply_form = comments.create(data.content, data.id),
+			object_reply = {};
 
 		// Display reply form
 		$(this_comment_section).append(reply_form);
@@ -46,23 +47,42 @@ var comments = {
 		$('input.reply_button').click(function(){
 			reply_data = $('input.reply_field').serializeArray();
 
-			// DEBUG
-			console.log('Client sends: ' + topics.jsonify(reply_data));
+			// Remove the junk. Intermediate step.
+			object_reply = topics.jsonify(reply_data);
 
-			// Send comment to server
-	       $.ajax({
-	           type: 'POST',
-	           url: '/reply?pID=' + node_id,
-	           data: reply_data,
-	           
-	           // The server's response upon successfully sending the topic is the corresponding json string
-	           success: function(data, textStatus, jqXHR) {
-	                // DEBUG:
-	                console.log('Client receives: ' + JSON.stringify(data));
-	           },
-	           contentType: "application/json",
-	           dataType: 'json'
-	       });
+			// Convert into JavaScript object
+			object_reply = JSON.parse(object_reply);
+
+			console.log('Client sends: ' + JSON.stringify(object_reply));
+
+			if (object_reply.reply_content == '') {
+				console.log('Reply is empty');
+		   	}
+
+		   	else {
+				// Send comment to server
+		       $.ajax({
+		           type: 'POST',
+		           url: '/reply?pID=' + node_id,
+
+		           // Technically sending a JavaScript Object. 
+		           // topics.jsonify messes up the string which causes
+		           // JSON.parse to produce errors. It's still JSON???
+		           data: object_reply,
+		           
+		           // The server's response upon successfully sending the topic is the corresponding json string
+		           success: function(data, textStatus, jqXHR) {
+		                // DEBUG:
+		                console.log('Client receives comment: ' + JSON.stringify(data));
+
+		                // RENDER NEW COMMENT
+		           },
+		           contentType: "application/json",
+		           dataType: 'json'
+		       });		   
+		   	}
+
+		   	// Clear reply field
         });
 	},
 	
@@ -106,7 +126,7 @@ var comments = {
 					// DEBUG:
 					console.log('Show comments and reply form');
 
-					// Do some magic
+					// NEEDS TO BE IMPLEMENTED...
 
 				}
 				// There are no comments

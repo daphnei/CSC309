@@ -2,8 +2,10 @@ var NODES = [];
 
 // Handle module for server
 module.exports = {
-	get_request: function(request, response, uri, filename, received_data, POST, root_id, temp_node){
-		var comment_struct = {};
+	get_request: function(request, response, filename, received_data, POST, root_id, temp_node){
+		
+		// Comment node that will be returned to the client
+		var comment_node = {};
 
 		// Check what kind of GET request
 		fs.exists(filename, function(exists) {
@@ -27,15 +29,16 @@ module.exports = {
 				// Find comments for node
 				if (temp_node.comment_count > 0) {
 
-					// Do something to comment_struct...
+					// Do something to comment_node...
 					// Still have to figure out how to create comment structure
+
 				}
 				else {
-					comment_struct = help.insert_comment('', root_id);
+					comment_node = help.insert_comment('', root_id);
 				}
 
 				// If has children send each child, and if those children have children do so as well
-				response.end(JSON.stringify(comment_struct));
+				response.end(JSON.stringify(comment_node));
 			}
 
 			// Not an API call and not an existant file
@@ -46,7 +49,7 @@ module.exports = {
 			}
 		});
 	},
-	post_request: function(request, response, uri, filename, received_data, POST, root_id, temp_node){
+	post_request: function(request, response, filename, received_data, POST, root_id, temp_node){
 
 		// Receive the building blocks for the node from the client
 		request.on('data', function (data) {
@@ -59,11 +62,13 @@ module.exports = {
 		    POST = qs.parse(received_data);
 
 		    // DEBUG:
-		    console.log('Server Received:' + JSON.stringify(POST));
+		    console.log('Server Received JavaScript Object: ' + JSON.stringify(POST));
 
 		    // The request is for a topic
 		    if (request.url === '/topic/submit') {
-				console.log('Create new topic');
+				console.log('Create new topic ');
+				console.log('Title: ' + POST["title"]);
+				console.log('URL: ' + POST["url"]);
 
 				// Create the node
 		        temp_node = help.insert_topic(POST["title"], POST["url"]);
@@ -72,17 +77,25 @@ module.exports = {
 		        // The client is expecting this content type, it MUST match
 				response.writeHead(200, {"content-type": "application/json"});
 
-				// Send the newest node
+				// Send the newest topic
 				response.end(JSON.stringify(temp_node));
 		    }
 
 		    // The request is for a comment reply
 		    else if (request.url === '/reply?pID=' + root_id) {
+
+		    	// DEBUG:
 		    	console.log('Create new comment under ' + root_id);
+		    	console.log('Reply Content: ' + POST["reply_content"]);
 
-		    	temp_node = help.insert_comment(content, root);
+		    	temp_node = help.insert_comment(POST["reply_content"], root_id);
 
-		    	// Send to client
+		        // Respond to client. Will trigger success callback on comments.js ajax call
+		        // The client is expecting this content type, it MUST match
+				response.writeHead(200, {"content-type": "application/json"});
+
+				// Send the newest comment
+				response.end(JSON.stringify(temp_node));
 		    }
 
 		    // Error
@@ -102,22 +115,17 @@ var help = {
 	/**
 	 * Find the node matching the id
 	 *
-	 * @param {String} root_id
+	 * @param {String} root_id ID of the node that is being searched for
 	 *
-	 * @return {Object} node
+	 * @return {Object} node Node that was found with the matching id. Empty if not found.
 	 */
 	find_node: function(root_id) {
-		console.log('Looking for node ' + root_id);
-
 		for (var i = NODES.length - 1; i >= 0; i--) {
 
 			if(NODES[i].id == root_id) {
-				console.log('Found node ' + NODES[i].id);
 				return NODES[i];
 			}
 		}
-
-		console.log('Did not find node ' + root_id);
 		return {}
 	},
 	
@@ -163,6 +171,8 @@ var help = {
 	 * @param {String} type
 	 * @param {String} content
 	 * @param {String} root
+	 *
+	 * @return {Object} new_node Node created as a result of inserting a new comment
 	 */
 	insert_comment: function(content, root_id) {
 		var new_node = {},
@@ -182,9 +192,9 @@ var help = {
 		temp_root.comment_count = temp_root.children_ids.length;
 
 		// DEBUG: Pointers confuse me from time to time
-		if (temp_root === help.find_node(new_node.root_id)) {
-			console.log('Root ' + temp_root.id + ' reflects comment ' + new_node.id + ' addition');
-		}
+		// if (temp_root === help.find_node(new_node.root_id)) {
+		// 	console.log('Root ' + temp_root.id + ' reflects comment ' + new_node.id + ' addition');
+		// }
 
 		NODES.push(new_node);
 
@@ -196,6 +206,8 @@ var help = {
 	 *
 	 * @param {String} description
 	 * @param {String} link
+	 *
+	 * @return {Object} new_node Node created as a result of inserting a new topic
 	 */
 	insert_topic: function(description, link) {
 		var new_node = {};

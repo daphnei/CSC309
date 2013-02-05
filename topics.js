@@ -202,7 +202,7 @@ var topics = {
         }
 
         // DEBUG:
-        console.log('Client sends: ' + topics.jsonify(form_data));
+        console.log('Client submits: ' + topics.jsonify(form_data));
         
        // Submit data to server (Will report an error without a server)
        $.ajax({
@@ -213,7 +213,7 @@ var topics = {
            // The server's response upon successfully sending the topic is the corresponding json string
            success: function(data, textStatus, jqXHR) {
                 // DEBUG:
-                console.log('Client receives: ' + JSON.stringify(data));
+                console.log('Client receives topic: ' + JSON.stringify(data));
 
                 topics.render(JSON.stringify(data));
            },
