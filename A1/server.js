@@ -2,6 +2,7 @@ http = require('http');
 fs = require('fs');
 path = require('path');
 url = require('url');
+querystring = require('querystring');
 
 MIME_TYPES = {
         '.html': 'text/html',
@@ -11,16 +12,33 @@ MIME_TYPES = {
 };
 
 var nodes = new Array();
+var port = 1234;
 
-http.createServer(onRequest).listen(1234);
+http.createServer(onRequest).listen(port);
+
+console.log("Server running on port " + port);
 
 function onRequest (req, res) {
-	if (req.url == '/' || req.url == '/topic') {
+	var reqUrl = url.parse(req.url, true);
+
+	if (reqUrl.href  == '/' || reqUrl.href == '/topic') {
 		// home / get list of topics
 		console.log('Hit homepage.');
 		res.writeHead(200, {'Content-Type' : MIME_TYPES['.html']});
 		var buffer = fs.readFile('index.html',
 			function(err, data) { serveFile(err, data, res); } );
+	}
+	else if (reqUrl.pathname == '/topic/submit' && req.method == 'POST') {
+		// submit topic
+		req.setEncoding('utf-8'); // Assuming UTF-8 requests.
+
+		req.on('data', function(data) {
+			// For a simple form like this, data is sent in a query string.
+			var info = querystring.parse(data);
+			insertTopic(info.title, info.url);
+			console.log("Submitted topic '" + info.title + "' at url '" + info.url + "'.");
+			console.log(nodes);
+		});
 	}
 	else {
 		// For everything else (CSS file, scripts, etc.) assume it's asking for a static file.
@@ -35,7 +53,6 @@ function onRequest (req, res) {
 	
 	// TODO:
 
-	// submit topic
 	
 	// submit comment
 	
@@ -55,23 +72,26 @@ function serveFile(err, data, res) {
 	}
 };
 
-function insertComment(type, content, root) {
+function insertComment(content, root) {
 	var node = {};
 	
-	node.type = type;
+	node.type = "comment";
 	node.content = content;
 	node.vote_count = 0;
 	node.id = nodes.length;
 	node.children_ids = new Array();
 	node.root_id = root;
+	
+	// TODO: error handling?
+	nodes[root].children_ids.push(node);
 
 	nodes.push(node);
 }
 
-function insertTopic(type, description, link) {
+function insertTopic(description, link) {
 	var node = {};
 	
-	node.type = type;
+	node.type = "topic";
 	node.content = description;
 	node.vote_count = 0;
 	node.id = nodes.length;
