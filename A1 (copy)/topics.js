@@ -72,18 +72,18 @@ var topics = {
      *
      * @param {Object} form_data  Contains more info besides the necessary data for a topic
      *
-     * @return {String} JSON string describing topic 
+     * @return {String} JSON objecr descibing topic
      */
     jsonify: function(form_data) {
-        var json_data = {};
+        var json_data = new Array();
 
-        // Pick necessary data only
+        // Pick necessary data only, but can't name it or stringify won't work
         $.each(form_data, function(i, data) {
-            json_data[data.name] = data.value;
+            json_data.push(data.value);
         });
-
+		
         // Convert into a json string
-        return JSON.stringify(json_data);
+        return json_data;
     },
     
     /**
@@ -97,7 +97,7 @@ var topics = {
      *
      * @return {String} HTML for topic
      */
-    create: function(topic_id, title, interest_link, vote_count, comment_count){
+    createHTML: function(topic_id, title, interest_link, vote_count, comment_count){
 
         var html_topic = 
             '<li id=' +  topic_id + ' class="topic">' +
@@ -115,19 +115,19 @@ var topics = {
     /**
      * Place topic created from data on the frontpage
      *
-     * @param {String} data JSON string that contains all the information on how to create a form
+     * @param {JSON} data JSON  that contains all the information on how to create a form
      */
     render: function(data) {
 
         // Convert JSON string into JavaScript Object
-        var form = JSON.parse(data),
-            new_topic = topics.create(form.root_id, form.content, form.link, form.vote_count, form.comment_count);
+        var new_topic = topics.createHTML(data.id, data.content, data.link, data.vote_count, data.children_ids.length);
 
         // Use create and then use jQuery to render on DOM...
         $('ol#content').append(new_topic);
 
         // Bind the comment section to clicks
-        topics.bind_comment(form.root_id);
+        topics.bind_comment(data.id);
+        
     },
 
     /**
@@ -175,40 +175,28 @@ var topics = {
         }
 
         // DEBUG: Not sending junk to server
-        console.log(topics.jsonify(form_data));
+        var toSend = topics.jsonify(form_data);
+        console.log(toSend);
         
-//        // Submit data to server (Will report an error without a server)
-//        $.ajax({
-//            type: 'POST',
-//            url: '/topic/submit',
-//            data: form_data,
-//            
-//            // The server's response upon successfully sending the topic is the corresponding json string
-//            success: function(data, textStatus, jqXHR) {
-//                topics.render(data)
-//            },
-//            contentType: "application/json",
-//            dataType: 'json'
-//        });
+        // Submit data to server (Will report an error without a server)
+        $.ajax({
+            type: 'POST',
+            url: '/topics/submit',
+            data: JSON.stringify(toSend),
+            contentType: "text/json",
+
+            // The server's response upon successfully sending the topic is the corresponding json string
+            success: function(form_data, textStatus, jqXHR) {
+				console.log("Server response with:");
+				console.log(form_data);
+                topics.render(form_data)
+            }
+        });
 
         topics.hide_form();
     },
     
-    /**
-	 * requests json for front page topics from the server
-	 *
-	 * @param {Function} callback The method that will be called once the data has been retrieved
-	 */
-	getJSONForTopics : function(callback) {
-			$.ajax('./topics', {
-			type: 'GET',
-			dataType: 'json',
-			success: function(data) { showTopicsFromJSON(data); },
-			error  : function()     { showTopicsFromJSON(null); }
-		});
-	},
-
-	/** 
+    /** 
 	 *  creates visuals from the topic json retrieved from the server
 	 * 
 	 * @param {Array} the list of topic nodes retrieved from the server
@@ -216,12 +204,25 @@ var topics = {
 	showTopicsFromJSON : function(data) {
 		for(var i = 0; i < data.length; i++) {
 			var currentTopic = data[i];
-			$('ol#content').append(topics.create(currentTopic.id,
+			$('ol#content').append(topics.createHTML(currentTopic.id,
 												currentTopic.content,
 												'#',
 												currentTopic.vote_count,
 												currentTopic.children_ids.length));
 			topics.bind_comment(1);
 		}
+	},
+	
+    /**
+	 * requests json for front page topics from the server
+	 *
+	 */
+	getJSONForTopics : function() {
+			$.ajax('./topics', {
+			type: 'GET',
+			dataType: 'json',
+			success: function(data) { topics.showTopicsFromJSON(data); },
+			error  : function()     { topics.showTopicsFromJSON(null); }
+		});
 	}
 };  

@@ -12,7 +12,11 @@ function insertComment(content, root) {
 
 	nodes.push(node);
 }
-
+/**
+ * Inserts a node representing a topic
+ * 
+ * returns the new node
+ */
 function insertTopic(description, link) {
 	var node = {};
 	
@@ -24,6 +28,7 @@ function insertTopic(description, link) {
 	node.link = link
 	
 	nodes.push(node);
+	return node;
 }
 
 exports.insertTopic = insertTopic;
