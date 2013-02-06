@@ -12,10 +12,6 @@ MIME_TYPES = {
         '.txt': 'text/plain'
 };
 
-// All topics and comments
-var nodes = [];
-	
-
 // Initiate server, request from the client and response from the server
 http.createServer(function (request, response) {
 	
@@ -41,7 +37,7 @@ http.createServer(function (request, response) {
 		// DEBUG:
 		console.log('Handle GET request: ' + request.url);
 
-		server_handle.get_request(request, response, filename, received_data, POST, root_id, temp_node);
+		server_handle.get_request(request, response, filename, root_id, temp_node);
 	} 
 	// Error
 	else {

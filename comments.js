@@ -95,7 +95,7 @@ var comments = {
 	/**
 	 * Show the comment section. This routine will decipher from what topic.
 	 *
-	 * @param {Object} section DOM object of the comment section
+	 * @param {Object} section Unwrapped DOM object of the comment section
 	 */
 	show: function(section) {
 		
@@ -155,7 +155,7 @@ var comments = {
 	/**
 	 * Reset the form to allow new input
 	 *
-	 * @param {Object} form DOM form object that can be queried on
+	 * @param {Object} form jQuery form object that can be queried on
 	 */
 	reset_form: function(form){
 	    form.find('input:text, input:password, input:file, select, textarea')

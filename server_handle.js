@@ -2,7 +2,7 @@ var NODES = [];
 
 // Handle module for server
 module.exports = {
-	get_request: function(request, response, filename, received_data, POST, root_id, temp_node){
+	get_request: function(request, response, filename, root_id, temp_node){
 		
 		// Comment node that will be given to the client
 		var comment_node = {};
