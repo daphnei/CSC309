@@ -165,7 +165,7 @@ var topics = {
 
         // Bind the interaction that will show the comments section upon clicking on it
         $('#' + topic_id + ' ul.counts li.show_comments').click(function(){
-            comments.show(this);
+            comments.toggle(this);
         });
     },
         
