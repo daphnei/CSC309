@@ -82,6 +82,10 @@ ul.counts li {
     list-style-type:none;
 }
 
+.comment {
+    margin-left: 20px;
+}
+
 #footer {
     height:30px;
     background-color:#AB2017;
