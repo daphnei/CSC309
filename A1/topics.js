@@ -246,7 +246,7 @@ var topics = {
 			var currentTopic = data[i];
 			$('ol#content').append(topics.createHTML(currentTopic.id,
 												currentTopic.content,
-												'#',
+												currentTopic.link,
 												currentTopic.vote_count,
 												currentTopic.children_ids.length));
 			topics.bind_comment(1);
