@@ -19,7 +19,7 @@ var comments = {
 		var new_content = content ? content : '';
 
 		html = 
-			'<li id=' + comment_id + ' class=comment">' + new_content + 
+			'<li id=' + comment_id + ' class="comment">' + new_content + 
 				'<form id=form' + comment_id + ' class="reply_form">' + 
 					'<input value="" type="text" size="60" name="reply_content" class="reply_field"/>' +
 					'<input value="Reply" type="button" name="reply_submit" class="reply_button"/>' +
