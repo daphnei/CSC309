@@ -33,4 +33,5 @@ function insertTopic(description, link) {
 }
 
 exports.insertTopic = insertTopic;
+exports.insertComment = insertComment;
 exports.nodes = nodes;

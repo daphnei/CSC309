@@ -10,7 +10,7 @@ handle["/topic"] = requestHandlers.getNodeFromIndex; // sends the topic node for
 handle["/topics"] = requestHandlers.getTopics; //the initial page with a list of topics
 handle["/topics/submit"] = requestHandlers.submitTopic; //sending in the filled out topic or comment form
 handle["/upvote"] = requestHandlers.upvote; //upvote a comment
-handle["/comments/submit"] = requestHandlers.submitComment; //submit a comment
+handle["/reply"] = requestHandlers.submitComment; //submit a comment
 handle["/comments"] = requestHandlers.getComments; //get the comments for a particular topic
 
 /* various assets */

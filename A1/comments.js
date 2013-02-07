@@ -158,10 +158,10 @@ var reply = reply_data[0].value;
           success: function(new_data, textStatus, jqXHR) {
             // DEBUG:
             console.log('Client receives comment: ' + JSON.stringify(new_data));
-            comments.render(new_data, new_data['id'], comment_section);
+            comments.render(new_data, root_id, comment_section);
           },
           contentType: "text/plain",
-          dataType: 'json'
+          dataType: 'text'
         });
       }
     });

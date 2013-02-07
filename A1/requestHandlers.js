@@ -96,7 +96,7 @@ function getNodeFromIndex(response, request) {
 }
 
 function isValid(id) {
-  return !(params.id < 0 || params.id >= data.nodes.length);
+  return !(id < 0 || id >= data.nodes.length);
 }
 
 /**
