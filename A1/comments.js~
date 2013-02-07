@@ -136,7 +136,7 @@ var comments = {
 
       // Get the data to send to the server
       reply_data = $('#form' + root_id).find('input.reply_field').serializeArray();
-var reply = reply_data[0].value;
+			var reply = reply_data[0].value;
 
       // Make fields reusable after usage
       comments.reset_form($('#form' + root_id));

@@ -1,0 +1,181 @@
+var fs = require('fs');
+var path = require('path');
+var url = require('url');
+var querystring = require("querystring");
+var fs = require("fs");
+var data = require("./data");
+var url = require("url");
+
+MIME_TYPES = {
+		'.html': 'text/html',
+		'.css': 'text/css',
+		'.js': 'text/javascript',
+		'.txt': 'text/plain',
+		'.json': 'application/json'
+};
+
+// globals used for grabbing topic data from JSON object
+NAME = 0;
+URL = 1;
+
+/**
+ * callback, sends input data to the server
+ * @param (err) The type of error that occured. 0 if no error occured.
+ * @param (data) The data from the file.
+ * @param (response) The server's response to the client.
+ */
+function serveFile(err, data, response) {
+	if (err) {
+		// Overwrite the header with a 404 error if the file can't
+		// be served.
+		response.writeHead(404, {'Content-Type' : MIME_TYPES['.txt']});
+		response.end("404: file not found.");
+	}
+	else {
+		// write the contents back
+		response.write(data);
+		response.end();
+	}
+};
+
+/**
+ * Sends the index html page
+ * @param (response) The server's response to the client. 
+ */
+function start(response) {
+	console.log("Request handler 'start' was called.");
+	response.writeHead(200, {'Content-Type' : MIME_TYPES['.html']});
+	var buffer = fs.readFile('index.html',
+	function(err, data) { serveFile(err, data, response); } );
+}
+
+/**
+ * Used to send various types of assets, including js and css to the client
+ * @param (response) The server's response to the client.
+ * @param (request) The request received by the server.
+ */
+function getAsset(response, request) {
+	console.log("Request handler 'generic' was called, requesting " + request.url + ".");
+	
+	var urlpath = url.parse(request.url).pathname;
+	var ext = path.extname(urlpath);
+	response.writeHead(200, {'Content-Type' : MIME_TYPES[ext]});
+
+	var filename = path.relative("/", urlpath);
+	var buffer = fs.readFile(filename, function(err, data) { 
+		serveFile(err, data, response); 
+	});
+}
+
+/**
+ * Send a list of child nodes associated with a node to the client
+ * @param (response) The server's response to the client.
+ * @param (request) The request from the client to the server.
+ */
+function getChildren(response, request) {
+	console.log("Request handler 'getTopic' was called.");
+	
+	// get the node id whose comments we're showing from the request url
+	var queryData = url.parse(request.url, true).query;
+	var id = queryData.id;
+	if (!isValid(id)) {
+		response.writeHead(400, { 'Content-Type' : MIME_TYPES['.txt'] });
+		response.end("400: Invalid topic specified."); 
+	}
+	else {
+		console.log(id);
+		console.log(data.nodes);
+		response.writeHead(200, { 'Content-Type' : MIME_TYPES['.json'] });
+
+		// send back the children of that node to the client
+		var childNodes = new Array();
+		var childIDs = data.nodes[id].children_ids;
+		for (var i = 0; i < childIDs.length; i++) {
+			childNodes.push(data.nodes[childIDs[i]]);
+		}
+
+		console.log("Populated child nodes with " + childNodes.length +
+										" items.");
+		response.write(JSON.stringify(childNodes));
+		response.end();
+	}
+}
+
+/**
+ * Return whether or not the given topic id is valid.
+ * @param (topic) The id of the topic to check.
+ */
+function isValid(id) {
+	return !(id == null || id < 0 || id >= data.nodes.length);
+}
+
+/**
+ * Sends a JSON object conssting of only topic nodes to the client
+ * @param (response) The server's response to the client.
+ */
+function getTopics(response) {
+	console.log("Request handler 'getTopics' was called.");
+
+	response.writeHead(200, { "Content-Type": MIME_TYPES['.json']});
+	
+	var topicNodes = new Array();
+	for (var i = 0; i < data.nodes.length; i++) {
+		if(data.nodes[i].type = 'topic') {
+			topicNodes.push(data.nodes[i]);
+		}
+	}
+	
+	console.log("Populated topicNodes with " + topicNodes.length + 
+			" items");
+	response.write(JSON.stringify(topicNodes));
+	response.end();
+}
+
+/**
+ * Called when client submts a new topic
+ */
+function submit(response, request) {
+	console.log("Request handler 'topics/submit' was called.");
+	
+	var jsonString = '';
+	var topic;
+	request.addListener('data', function(buffer) {
+		jsonString += buffer; });
+	request.addListener('end', function() {
+		console.log(jsonString);
+		var json = JSON.parse(jsonString); 
+		//console.log(response);
+
+		// create one of our json objects
+		console.log(json);
+		topic = data.insertTopic(json[0], json[1]);
+		response.writeHead(200, { "Content-Type": MIME_TYPES['.json']});
+		response.write(JSON.stringify(topic));
+		response.end();
+	});
+}
+
+function upvote(response) {
+	console.log("Request handler 'upvote' was called.");
+	
+	response.writeHead(200, {"Content-Type": "text/html"});
+	response.write("got to response");
+	response.end();
+}
+
+
+function comment(response) {
+	console.log("Request handler 'comment' was called.");
+	
+	response.writeHead(200, {"Content-Type": "text/html"});
+	response.write("got to comment");
+	response.end();
+}
+
+exports.start = start;
+exports.getChildren = getChildren;
+exports.getTopics = getTopics;
+exports.submit = submit;
+exports.upvote = upvote;
+exports.comment = comment;
+exports.getAsset = getAsset;
