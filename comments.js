@@ -24,6 +24,9 @@ var comments = {
 					'<input value="" type="text" size="60" name="reply_content" class="reply_field"/>' +
 					'<input value="Reply" type="button" name="reply_submit" class="reply_button"/>' +
 				'</form>' + 
+                '<ul class="comments_section">' +
+
+                '</ul>' +
 			'</li>';
 
 		return html;
@@ -44,6 +47,8 @@ var comments = {
 
 		// Display reply form
 		comment_section.append(reply_form);
+
+        comment_section = $('li#' + root_id).find('ul.comments_section')
 
 		// Bind reply button. Will contact server
 		$('#' + 'form' + data['id']).find('input.reply_button').click(function(){
@@ -77,11 +82,10 @@ var comments = {
 		           data: object_reply,
 		           
 		           // The server's response upon successfully sending the topic is the corresponding json string
-		           success: function(data, textStatus, jqXHR) {
+		           success: function(new_data, textStatus, jqXHR) {
 		                // DEBUG:
-		                console.log('Client receives comment: ' + JSON.stringify(data));
-
-		                comments.render(data, data['id'], comment_section);
+		                console.log('Client receives comment: ' + JSON.stringify(new_data));
+		                comments.render(new_data, new_data['id'], comment_section);
 		           },
 		           contentType: "application/json",
 		           dataType: 'json'
