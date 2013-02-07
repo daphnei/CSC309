@@ -51,7 +51,7 @@ var topics = {
         if (!field) {
             message = "You didn't fill in the field.";
         } else if(field.length > 140) {
-            message = "Your input is too long!";
+            message = "Your input is too damn long!";
         }
 
         return message;
@@ -82,6 +82,7 @@ var topics = {
             json_data.push(data.value);
         });
 		
+        // Convert into a json string
         return json_data;
     },
     

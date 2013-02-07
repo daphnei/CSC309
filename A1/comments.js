@@ -33,7 +33,7 @@ var comments = {
 	 *
 	 * @param {Object} section DOM object of the comment section
 	 */
-	toggle: function(section) {
+	show: function(section) {
 		
 		// Get the topic id of the topic containing the comment section
 		node_id = $(section).parent().parent().attr("id");
