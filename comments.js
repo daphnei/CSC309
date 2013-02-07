@@ -33,25 +33,25 @@ var comments = {
 	 * Place comment created from data on the corresponding node
 	 *
 	 * @param {Object} data Object that contains all the information on how to create a comment
-	 * @param {String} node_id Comment or Topic that is being replied to
+	 * @param {String} root_id Comment or Topic that is being replied to
 	 * @param {Object} comment_section
 	 */
-	render: function(data, node_id, comment_section){
+	render: function(data, root_id, comment_section){
 
 		var reply_data = [],
-			reply_form = comments.create(data.content, data.id),
+			reply_form = comments.create(data['content'], data['id']),
 			object_reply = {};
 
 		// Display reply form
 		comment_section.append(reply_form);
 
 		// Bind reply button. Will contact server
-		$('#' + 'form' + data.id).find('input.reply_button').click(function(){
+		$('#' + 'form' + data['id']).find('input.reply_button').click(function(){
 
-			reply_data = $('#' + 'form' + data.id)
+			reply_data = $('#' + 'form' + data['id'])
 						.find('input.reply_field').serializeArray();
 
-			comments.reset_form($('#' + 'form' + data.id));
+			comments.reset_form($('#' + 'form' + data['id']));
 
 			// Remove the junk. Intermediate step.
 			object_reply = topics.jsonify(reply_data);
@@ -69,7 +69,7 @@ var comments = {
 				// Send comment to server
 		       $.ajax({
 		           type: 'POST',
-		           url: '/reply?pID=' + node_id,
+		           url: '/reply?pID=' + root_id,
 
 		           // Technically sending a JavaScript Object. 
 		           // topics.jsonify messes up the string which causes
@@ -81,9 +81,7 @@ var comments = {
 		                // DEBUG:
 		                console.log('Client receives comment: ' + JSON.stringify(data));
 
-		                // comments.create(data['content'], data['id']);
 		                comments.render(data, data['id'], comment_section);
-
 		           },
 		           contentType: "application/json",
 		           dataType: 'json'
@@ -100,21 +98,21 @@ var comments = {
 	show: function(section) {
 		
 		// Get the topic id of the topic containing the comment section
-		var node_id = $(section).parent()
+		var root_id = $(section).parent()
 								.parent()
 								.attr("id"),
 
-			url = '/topic?id=' + node_id,
-			comment_section = $('li#' + node_id).find('ul.comments_section'),
+			url = '/topic?id=' + root_id,
+			comment_section = $('li#' + root_id).find('ul.comments_section'),
 			clean_data = {};
 
 		// DEBUG:
-		console.log('Show node: ' + node_id);
+		console.log('Show node: ' + root_id);
 		
 
 		// The comment section has elements displayed
 		if (comment_section.children().length > 0) {
-			console.log('Hide comments for node' + node_id);
+			console.log('Hide comments for node' + root_id);
 
 			// Hide the comments section
 			comment_section.children()
@@ -146,7 +144,7 @@ var comments = {
 					console.log('Show reply form');
 
 					// Render empty comment and submission form
-					comments.render(data, node_id, comment_section);
+					comments.render(data, data['id'], comment_section);
 				}
 			});
 		}

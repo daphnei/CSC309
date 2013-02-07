@@ -27,20 +27,27 @@ module.exports = {
 				response.writeHead(200, {"content-type": "application/json"});
 
 				// Find comments for node
+				// NOTE: This situation will not occur; the data is not stored after a refresh occurs
 				if (temp_node.comment_count > 0) {
 
-					// Do something to comment_node...
-					// Still have to figure out how to create comment structure
+					// Look at all children
+					$.each(temp_node.children, function(index, child){
 
+						// Find the child
+						comment_node = help.find_node(child);
+						
+						// Send child to client
+						response.end(JSON.stringify(comment_node));
+					});
 				}
 				else {
 
 					// The first comment is empty
 					comment_node = help.insert_comment('', root_id);
-				}
 
-				// If has children send each child, and if those children have children do so as well
-				response.end(JSON.stringify(comment_node));
+					// If has children send each child, and if those children have children do so as well
+					response.end(JSON.stringify(comment_node));
+				}
 			}
 
 			// Not an API call and not an existant file
@@ -144,6 +151,10 @@ var help = {
 		// index.html and '/' are aliases of one another
 		if (fs.statSync(filename).isDirectory()) {
 			filename += '/index.html';
+
+			// RESET ALL PERSISTENT DATA
+			console.log("Set up storage for all nodes");
+			NODES = [];
 		}
 		// Serve the file
 		fs.readFile(filename, "binary", function(err, file) {
