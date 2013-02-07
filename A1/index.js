@@ -6,6 +6,7 @@ var handle = {}
 /* the main pages of the REST api */
 handle["/"] = requestHandlers.start; //the initial page with a list of topics
 handle["/index"] = requestHandlers.start; //the initial page with a list of topics
+handle["/topic"] = requestHandlers.getComments; // the comments for a topic
 handle["/topics"] = requestHandlers.getTopics; //the initial page with a list of topics
 handle["/topics/submit"] = requestHandlers.submitTopic; //sending in the filled out topic or comment form
 handle["/upvote"] = requestHandlers.upvote; //upvote a comment

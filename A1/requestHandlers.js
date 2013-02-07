@@ -83,7 +83,7 @@ function getTopics(response) {
  * Sends a JSON object conssting of only topic nods to the server
  */
 function getComments(response) {
-	console.log("Request handler 'getTopics' was called.");
+	console.log("Request handler 'getComments' was called.");
 
 	response.writeHead(200, { "Content-Type": MIME_TYPES['.json']});
 	
@@ -156,6 +156,7 @@ function upvote(response) {
 }
 
 exports.start = start;
+exports.getComments = getComments
 exports.getTopics = getTopics;
 exports.submitTopic = submitTopic;
 exports.upvote = upvote;
