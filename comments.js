@@ -63,6 +63,7 @@ var comments = {
 		// Nested Comment Section
         comment_section = $('li#' + root_id).find('ul.comments_section')
 
+        // Be able to reply to the comment's comment
 		comments.reply_bind(root_id, comment_section);
 	},
 	
@@ -122,6 +123,7 @@ var comments = {
 					// DEBUG:
 					console.log('Show reply form');
 
+					// Display the reply for the topic
 					comments.first_comment(root_id, comment_section);
 				}
 			});
