@@ -23,6 +23,7 @@ var comments = {
 				'<form id=form' + comment_id + ' class="reply_form">' + 
 					'<input value="" type="text" size="60" name="reply_content" class="reply_field"/>' +
 					'<input value="Reply" type="button" name="reply_submit" class="reply_button"/>' +
+				    '<input type="text" style="display: none;" />' + // This fixes a quick with pressing enter
 				'</form>' + 
                 '<ul class="comments_section">' +
 
@@ -50,7 +51,7 @@ var comments = {
 
         comment_section = $('li#' + root_id).find('ul.comments_section')
 
-		// Bind reply button. Will contact server
+		// Bind reply button. Will contact server.
 		$('#' + 'form' + data['id']).find('input.reply_button').click(function(){
 
 			reply_data = $('#' + 'form' + data['id'])
