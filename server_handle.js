@@ -27,23 +27,13 @@ module.exports = {
 				response.writeHead(200, {"content-type": "application/json"});
 
 				// Find comments for node
-				// NOTE: This situation will not occur; the data is not stored after a refresh occurs
 				if (temp_node.comment_count > 0) {
 
-					// Look at all children
-					$.each(temp_node.children, function(index, child){
+					// NEEDS TO BE IMPLEMENTED
+					console.log('Server reveals all children: ' + request.url);
 
-						// Find the child
-						comment_node = help.find_node(child);
-						
-						// Send child to client
-						response.end(JSON.stringify(comment_node));
-					});
 				}
 				else {
-
-					// The first comment is empty
-					comment_node = help.insert_comment('', root_id);
 
 					// If has children send each child, and if those children have children do so as well
 					response.end(JSON.stringify(comment_node));
