@@ -6,6 +6,7 @@
 
 //  Global variable comments contains all comment functionality
 var comments = {
+
 	/**
 	 * Create the html that will render the matching comment id
 	 *
@@ -40,9 +41,9 @@ var comments = {
 	 */
 	render: function(data, root_id, comment_section){
 
-		var reply_data = [];
-		var reply_form = comments.create(data['content'], data['id']);
-		var object_reply = {};
+		var reply_data = [],
+			reply_form = comments.create(data['content'], data['id']),
+			object_reply = {};
 
 		// Display reply form
 		comment_section.append(reply_form);
@@ -51,7 +52,7 @@ var comments = {
 
 		// Bind reply button. Will contact server
 		$('#' + 'form' + data['id']).find('input.reply_button').click(function(){
-			console.log("button clicked");
+
 			reply_data = $('#' + 'form' + data['id'])
 						.find('input.reply_field').serializeArray();
 
@@ -73,9 +74,12 @@ var comments = {
 				// Send comment to server
 		       $.ajax({
 		           type: 'POST',
-		           url: '/comments/submit?pID=' + root_id,
-				   data: JSON.stringify(object_reply),
-            	   contentType: "text/json",
+		           url: '/reply?pID=' + root_id,
+
+		           // Technically sending a JavaScript Object. 
+		           // topics.jsonify messes up the string which causes
+		           // JSON.parse to produce errors. It's still JSON???
+		           data: object_reply,
 		           
 		           // The server's response upon successfully sending the topic is the corresponding json string
 		           success: function(new_data, textStatus, jqXHR) {
@@ -83,7 +87,8 @@ var comments = {
 		                console.log('Client receives comment: ' + JSON.stringify(new_data));
 		                comments.render(new_data, new_data['id'], comment_section);
 		           },
-
+		           contentType: "application/json",
+		           dataType: 'json'
 		       });		   
 		   	}
         });
@@ -95,65 +100,49 @@ var comments = {
 	 * @param {Object} section Unwrapped DOM object of the comment section
 	 */
 	show: function(section) {
-		
 		// Get the topic id of the topic containing the comment section
 		var root_id = $(section).parent()
 								.parent()
-								.attr("id");
-		var url = '/comments?id=' + root_id;
-		var comment_section = $('li#' + root_id).find('ul.comments_section');
-		var clean_data = {};
+								.attr("id"),
 
+			url = '/topic?id=' + root_id,
+			comment_section = $('li#' + root_id).find('ul.comments_section'),
+			clean_data = {};
 		// DEBUG:
 		console.log('Show node: ' + root_id);
+		
 
 		// The comment section has elements displayed
 		if (comment_section.children().length > 0) {
 			console.log('Hide comments for node' + root_id);
-
 			// Hide the comments section
 			comment_section.children().remove();
 		}
 
 		// The comment section has no elements displayed
 		else {
-
 			// Get comment data from server (will cause error if no server is present)
-			comments.getJSONForComments(url);
+			$.getJSON(url, function(data) {
+				// DEBUG:
+				console.log('Client sends: ' + url);
+				console.log(data);
+				// There are comments
+				if(data.comment_count > 0) {
+					// DEBUG:
+					console.log('Show comments and reply form');
+					// NEEDS TO BE IMPLEMENTED...
+				}
+				// There are no comments
+				else {
+					// DEBUG:
+					console.log('Show reply form');
+					// Render empty comment and submission form
+					comments.render(data, data['id'], comment_section);
+				}
+			});
 		}
 	},
-	
-	/**
-	 * requests json list of comments from the server
-	 *
-	 * url includes the topic id to be requesting children from
-	 */
-	getJSONForComments : function(url) {
-			$.ajax(url, {
-			type: 'GET',
-			dataType: 'json',
-			success: function(data) { comments.processCommentData(data); },
-			error  : function()     { comments.processCommentData(null); }
-		});
-	},
-	
-	/**
-	* if there are comments render them, otherwse, show a comment submit form
-	*/
-	processCommentData:function(data) {
-		console.log("Got:");
-		console.log(data);
-		if(data == null || data.comment_count == 0) {
-		// DEBUG:
-			// Render empty comment and submission form
-			comments.render(data, data.id, comment_section);
-		} else {
-			// DEBUG:
-			console.log('Show comments and reply form');
-			// NEEDS TO BE IMPLEMENTED...
-		}
-	},
-	
+
 	/**
 	 * Reset the form to allow new input
 	 *
@@ -168,4 +157,3 @@ var comments = {
 	    	.removeAttr('selected');
 	}
 };
- 

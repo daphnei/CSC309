@@ -80,9 +80,32 @@ function getTopics(response) {
 }
 
 /**
+ * Sends a JSON object conssting of only topic nods to the server
+ */
+function getComments(response) {
+	console.log("Request handler 'getTopics' was called.");
+
+	response.writeHead(200, { "Content-Type": MIME_TYPES['.json']});
+	
+	//eventually need to get this from request
+	var id = 0;
+	
+	var commentNodes = new Array();
+	for (var i = 0; i < data.nodes.length; i++) {
+		if(data.nodes[i].type == 'comment' && data.nodes[i].root_id == id) {
+		commentNodes.push(data.nodes[i]);
+		}
+	}
+	
+	console.log("Populated topicNodes with " + commentNodes.length + " items");
+	response.write(JSON.stringify(commentNodes));
+	response.end();
+}
+
+/**
  * Called when client submts a new topic
  */
-function submit(response, request) {
+function submitTopic(response, request) {
 	console.log("Request handler 'topics/submit' was called.");
 	
 	var jsonString = '';
@@ -102,6 +125,28 @@ function submit(response, request) {
 	});
 }
 
+/**
+ * Called when client submts a new comment
+ */
+function submitComment(response, request) {
+	console.log("Request handler 'topics/submit' was called.");
+	
+	var jsonString = '';
+	request.addListener('data', function(buffer) {
+		jsonString += buffer; });
+	request.addListener('end', function() {
+		
+		console.log(jsonString);
+		var json = JSON.parse(jsonString); //the two field provided by the client
+		//console.log(response);
+		//create one of our json objects
+		var topic = data.insertComment("hello", 0);
+		response.writeHead(200, { "Content-Type": MIME_TYPES['.json']});
+		response.write(JSON.stringify(topic));
+		response.end();
+	});
+}
+
 function upvote(response) {
 	console.log("Request handler 'upvote' was called.");
 	
@@ -110,18 +155,10 @@ function upvote(response) {
 	response.end();
 }
 
-
-function comment(response) {
-	console.log("Request handler 'comment' was called.");
-	
-	response.writeHead(200, {"Content-Type": "text/html"});
-	response.write("got to comment");
-	response.end();
-}
-
 exports.start = start;
 exports.getTopics = getTopics;
-exports.submit = submit;
+exports.submitTopic = submitTopic;
 exports.upvote = upvote;
-exports.comment = comment;
+exports.submitComment = submitComment;
 exports.getAsset = getAsset;
+exports.getComments = getComments;

@@ -11,6 +11,7 @@ function insertComment(content, root) {
 	node.root_id = root;
 
 	nodes.push(node);
+	return node;
 }
 /**
  * Inserts a node representing a topic
