@@ -82,6 +82,7 @@ var topics = {
             json_data.push(data.value);
         });
 		
+        // Convert into a json string
         return json_data;
     },
     
