@@ -39,22 +39,53 @@ var topics = {
     },
     
      /**
-     * Check if the given piece of data is valid
+     * Check if the given title is valid
      *
-     * @param {String} field Contains the value at the URL or Title field
-     *
+     * @param {String} field Contains the string you want to use for your title
+	 *
      * @return {String} Empty string if valid, otherwise a rejection reason
      */
-    validate: function(field) {
+    validate_title: function(field) {
         var message = '';
-
+		
         if (!field) {
-            message = "You didn't fill in the field.";
+            message = "You didn't fill in the title.";
         } else if(field.length > 140) {
-            message = "Your input is too damn long!";
+            message = "Your title is too damn long!";
         }
 
         return message;
+    },
+
+     /**
+     * Check if the given url is valid, adding an http:// if needed.
+     *
+     * @param {String} field Contains the string you want to use for your url
+	 *
+     * @return {String} An object containing the following fields:
+	 *		- clean_url: the cleaned up url if validation succeeds.
+	 *		- rejection_reason: the rejection message if validation fails, empty string 
+	 *				if it succeeds.
+     */
+    validate_url: function(field) {
+
+        var result = {
+			clean_url : field,
+			rejection_reason : ''
+		};
+		
+		url_matcher = /^(https?|ftp):\/\/[a-z0-9-]+(\.[a-z0-9-]+)+([/?].*)?$/i
+		if (!field.match(url_matcher)) {
+			// It failed, but it may have been a url submitted without an http://. Try adding it.
+			result.clean_url = "http://" + field;
+
+			if (!result.clean_url.match(url_matcher)) {
+				// There is no hope for this URL.
+				result.rejection_reason = "Invalid URL!";
+			}
+		}
+
+        return result;
     },
 
      /**
@@ -101,11 +132,13 @@ var topics = {
 
         var html_topic = 
             '<li id=' +  topic_id + ' class="topic">' +
-                '<h3 class="topic_title">' + '<a href="' + topics.linkify(interest_link) + '">' + title + '</a>' + '</h3>' +
+                '<h3 class="topic_title">' + '<a href="' + interest_link + '" title="'
+					+ interest_link + '" target="_blank">' + title + '</a>' + '</h3>' +
                 '<ul class="counts">' +
                     '<li>' + vote_count + ' points </li>' +
                     '<li> | </li>' +
-                    '<li class="show_comments">' + '<a href="#">' + comment_count + ' comments </a>' + '</li>' +
+                    '<li class="show_comments">' + '<a href="#">' + comment_count +
+									' comments </a>' + '</li>' +
                 '</ul>' +
                 '<ul class="comments_section">' +
 
@@ -114,28 +147,6 @@ var topics = {
         return html_topic;
     },
     
-     /**
-     * Make url into a valid HTML link
-     *
-     * @param {Integer} comment_count The total amount of comments for the topic 
-     *
-     * @return {String} parsed_url The url that can be used as a link in HTML
-     */
-    linkify: function(url){
-        var url_pattern = '',
-        url_pattern2 = '',
-        parsed_url = '';
-
-        //URLs starting with http://, https://
-        url_pattern = /(\b(https?):\/\/[-A-Z0-9+&amp;@#\/%?=~_|!:,.;]*[-A-Z0-9+&amp;@#\/%=~_|])/ig;
-        parsed_url = url.replace(url_pattern, 'title="$1" href="$1" target="_blank"');
-         
-        //URLs starting with "www."
-        url_pattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
-        parsed_url = parsed_url.replace(url_pattern2, '$1http://$2" target="_blank"');
-
-        return parsed_url;
-    },   
     
     /**
      * Place topic created from data on the frontpage
@@ -145,7 +156,8 @@ var topics = {
     render: function(data) {
 
         // Convert JSON string into JavaScript Object
-        var new_topic = topics.createHTML(data.id, data.content, data.link, data.vote_count, data.children_ids.length);
+        var new_topic = topics.createHTML(data.id, data.content, data.link, data.vote_count,
+											data.children_ids.length);
 
         // Use create and then use jQuery to render on DOM...
         $('ol#content').append(new_topic);
@@ -174,30 +186,33 @@ var topics = {
     submit: function() {
         
         // Place all fields into an array, where each element in a JS object
-        var form_data = $('#submission_form :input').serializeArray(),
-                valid = true,
-                rejection_reason = '';
+        var form_data = $('#submission_form :input').serializeArray();
 
-        // Alex: This is here since "each" returns from its own
-        // scope, but we want to return from the scope of submit.
-        // Can anyone come up with a more elegant solution?
-        $.each(form_data, function(i, data) {
+		// Note: we're currently doing all our validation in the client, which
+		// is not a good idea, because someone could maliciously modify the
+		// client. But it shouldn't be that big of a deal for the purposes
+		// of our assignment.
 
-            // Find out why the data is invalid
-            rejection_reason = topics.validate(data.value);
-            
-            // Display reason upon failure
-            if (rejection_reason) {
-                topics.reject(data.name, rejection_reason);
-                valid = false;
-                return valid;
-            }
-        });
+		if (form_data[0].name != "title" && form_data[1].name != "url") {
+			// Validate to make sure that something odd hasn't gone wrong with the form.
+			console.log("Malformed form data!");
+			return false;
+		}
 
-        // Submission cannot take place due to invalid data
-        if (!valid) {
-            return false;
-        }
+		// Validate to make sure the title is good.
+		var rejection_reason = topics.validate_title(form_data[0].value);
+		if (rejection_reason) {
+			console.log(rejection_reason);
+			return false;
+		}
+
+		// Now validate and clean up the URL.
+		var url_validation = topics.validate_url(form_data[1].value);
+		if (url_validation.rejection_reason) {
+			console.log(url_validation.rejection_reason);
+			return false;
+		}
+		form_data[1].value = url_validation.clean_url;
 
         // DEBUG: Not sending junk to server
         var toSend = topics.jsonify(form_data);
@@ -231,7 +246,7 @@ var topics = {
 			var currentTopic = data[i];
 			$('ol#content').append(topics.createHTML(currentTopic.id,
 												currentTopic.content,
-												'#',
+												currentTopic.link,
 												currentTopic.vote_count,
 												currentTopic.children_ids.length));
 			topics.bind_comment(1);
