@@ -69,7 +69,7 @@ function getTopics(response) {
 	
 	var topicNodes = new Array();
 	for (var i = 0; i < data.nodes.length; i++) {
-		if(data.nodes[i].type = 'topic') {
+		if(data.nodes[i].type == 'topic') {
 		topicNodes.push(data.nodes[i]);
 		}
 	}
@@ -77,6 +77,22 @@ function getTopics(response) {
 	console.log("Populated topicNodes with " + topicNodes.length + " items");
 	response.write(JSON.stringify(topicNodes));
 	response.end();
+}
+
+function getNodeFromIndex(response, request) {
+	console.log("Request handler 'getNodeFromIndex' was called.");
+	
+	var params = url.parse(request.url, true).query;
+	console.log("The id to retrieve a node for is " + params.id);
+	
+	if (id >= data.nodes.length) {
+		console.log("The client requested a node ID that does not exist.");
+		response.writeHead(400, {'Content-Type' : MIME_TYPES['.txt']});
+		response.end("400: invalid topic id requested.");
+	}
+	
+	response.writeHead(200, { "Content-Type": MIME_TYPES['.json']});
+	response.write(JSON.stringify(data.nodes[params.id]));
 }
 
 /**
@@ -163,3 +179,4 @@ exports.upvote = upvote;
 exports.submitComment = submitComment;
 exports.getAsset = getAsset;
 exports.getComments = getComments;
+exports.getNodeFromIndex = getNodeFromIndex;
