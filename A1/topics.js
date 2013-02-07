@@ -39,22 +39,53 @@ var topics = {
     },
     
      /**
-     * Check if the given piece of data is valid
+     * Check if the given title is valid
      *
-     * @param {String} field Contains the value at the URL or Title field
-     *
+     * @param {String} field Contains the string you want to use for your title
+	 *
      * @return {String} Empty string if valid, otherwise a rejection reason
      */
-    validate: function(field) {
+    validate_title: function(field) {
         var message = '';
 		
         if (!field) {
-            message = "You didn't fill in the field.";
+            message = "You didn't fill in the title.";
         } else if(field.length > 140) {
-            message = "Your input is too damn long!";
+            message = "Your title is too damn long!";
         }
 
         return message;
+    },
+
+     /**
+     * Check if the given url is valid, adding an http:// if needed.
+     *
+     * @param {String} field Contains the string you want to use for your url
+	 *
+     * @return {String} An object containing the following fields:
+	 *		- clean_url: the cleaned up url if validation succeeds.
+	 *		- rejection_reason: the rejection message if validation fails, empty string 
+	 *				if it succeeds.
+     */
+    validate_url: function(field) {
+
+        var result = {
+			clean_url : field,
+			rejection_reason : ''
+		};
+		
+		url_matcher = /^(https?|ftp):\/\/[a-z0-9-]+(\.[a-z0-9-]+)+([/?].*)?$/i
+		if (!field.match(url_matcher)) {
+			// It failed, but it may have been a url submitted without an http://. Try adding it.
+			result.clean_url = "http://" + field;
+
+			if (!result.clean_url.match(url_matcher)) {
+				// There is no hope for this URL.
+				result.rejection_reason = "Invalid URL!";
+			}
+		}
+
+        return result;
     },
 
      /**
@@ -156,24 +187,32 @@ var topics = {
         
         // Place all fields into an array, where each element in a JS object
         var form_data = $('#submission_form :input').serializeArray();
-        var valid = true;
-		var rejection_reason = '';
 
 		// Note: we're currently doing all our validation in the client, which
 		// is not a good idea, because someone could maliciously modify the
 		// client. But it shouldn't be that big of a deal for the purposes
 		// of our assignment.
 
+		if (form_data[0].name != "title" && form_data[1].name != "url") {
+			// Validate to make sure that something odd hasn't gone wrong with the form.
+			console.log("Malformed form data!");
+			return false;
+		}
+
 		// Validate to make sure the title is good.
+		var rejection_reason = topics.validate_title(form_data[0].value);
+		if (rejection_reason) {
+			console.log(rejection_reason);
+			return false;
+		}
 
-		// TODO: validate title and URL with separate functions. URL should not have a 140 char limit.
-
-		// Now validate the URL.
-
-        // Submission cannot take place due to invalid data
-        if (!valid) {
-            return false;
-        }
+		// Now validate and clean up the URL.
+		var url_validation = topics.validate_url(form_data[1].value);
+		if (url_validation.rejection_reason) {
+			console.log(url_validation.rejection_reason);
+			return false;
+		}
+		form_data[1].value = url_validation.clean_url;
 
         // DEBUG: Not sending junk to server
         var toSend = topics.jsonify(form_data);
