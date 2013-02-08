@@ -48,7 +48,7 @@ var comments = {
 
     // Valid data
     reply_form = comments.createHTML(data)
-
+    
     // Display reply form
     comment_section.append(reply_form);
 
