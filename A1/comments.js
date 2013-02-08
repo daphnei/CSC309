@@ -26,7 +26,7 @@ var comments = {
     '<input value="Reply" type="button" name="reply_submit" class="reply_button"/>' +
     '<input value="Upvote" type="button" name="up_reply" class="up_button"/>' +
     '<input type="text" style="display: none;" />' + // This fixes a quirk with pressing enter
-    '</form>' + '<ul class="counts">' + '<li>' + vote_count + ' points </li>' + '<li> | </li>' +
+    '</form>' + '<ul class="counts">' + '<li id="votecount' + comment_id + '">' + vote_count + ' points </li>' + '<li> | </li>' +
     '<li>' + comment_count + ' replies' + '</li>' + '</ul>' + '<ul class="comments_section">' +
     '</ul>' + '</li>';
     
@@ -148,7 +148,7 @@ var comments = {
       object_reply = {},
       reply_data = '';
 
-      console.log('Trying to bind submit comment button,  #form' + root_id);
+      console.log('Binding submit comment button,  #form' + root_id);
 
     // Bind reply button. Will contact server.
     $('#form' + root_id).find('input.reply_button').click(function() {
@@ -185,27 +185,30 @@ var comments = {
     });
   },
   
-  bindUpvoteButton: function(root_id, comment_section) {
+  bindUpvoteButton: function(id, comment_section) {
 
-    console.log('Trying to bind upvote button,  #form' + root_id);
+    console.log('Binding upvote button,  #form' + id);
       
 	  // Bind upvote button. Will contact server.
-    $('#form' + root_id).find('input.up_button').click(function(){
-        console.log('Upvote pressed for #form' + root_id);
+    $('#form' + id).find('input.up_button').click(function(){
+        console.log('Upvote pressed for #form' + id);
         
         $.ajax({
              type: 'POST',
 
              // The server should extrapolate from the URL which node is being upvoted
-             url: '/comments/upvote?id=' + root_id,
+             url: '/comments/upvote?id=' + id,
              
             // Update vote values and positioning of comments and topics
              success: function(new_data, textStatus, jqXHR) {
                   
                   // DEBUG: The client should receive the updated node
-                  console.log('Client receives upvoted comment: ' + JSON.stringify(new_data));
-				          console.log(new_data);
-                  // NEED TO IMPLEMENT
+                  console.log('Client received upvoted comment: ');
+				  console.log(new_data);
+                  // NEED TO IMPLEMENT REORDERING OF COMMENTS
+                  
+                  //change the text of the vote count to represent new tally
+                  $('#votecount' + id).html(new_data.vote_count + " points");
              },
              contentType: "application/json",
              dataType: 'json'
