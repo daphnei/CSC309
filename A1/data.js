@@ -47,7 +47,20 @@ function upvote(id) {
 	node.vote_count++;
 	//increase the root topic's vote count as well
 	nodes[node.root_id].vote_count++;
+	//reorder the root node's children by vote_count
+	nodes[node.root_id].children_ids.sort(compareVoteCounts);
 	return node;
+}
+
+/**
+ *  Used by the sort method to sort to sort nodes by vote_count
+ */
+function compareVoteCounts(index1, index2) {
+  if (nodes[index1].vote_count < nodes[index2].vote_count)
+     return -1;
+  if (nodes[index1].vote_count > nodes[index2].vote_count)
+    return 1;
+  return 0;
 }
 
 exports.upvote = upvote;

@@ -128,8 +128,7 @@ function getComments(response, request) {
 		}
 
 		// send them back to the client
-		console.log("Populated commentNodes with " + commentNodes.length + 
-			" items");
+		console.log("Populated commentNodes with " + commentNodes.length + " items");
 		response.write(JSON.stringify(commentNodes));
 		response.end();
 	}
