@@ -96,11 +96,11 @@ var comments = {
 
         // DEBUG:
         console.log('Client sends url: ' + url);
+        console.log('Client recieves: ' + JSON.stringify(data));
+        // console.log('Comment count: ' + data.comment_count);
 
-        // There are comments. 
-        // If the user hides all comments this will occur
-        // The server needs to implement sending all children to client in order for this to work
-        // Otherwise nothing will occur
+        // WILL ALWAYS BE UNDEFINED
+        // WILL FIX THIS
         if (data.comment_count > 0) {
 
           // DEBUG:
@@ -110,6 +110,7 @@ var comments = {
           // comments.render(data, data['id'], comment_section);
 
         }
+
         // There are no comments
         else {
 
