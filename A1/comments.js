@@ -53,10 +53,10 @@ var comments = {
     comment_section.append(reply_form);
 
     // Nested Comment Section
-    comment_section = $('li#' + data.root_id).find('ul.comments_section')
+    comment_section = $('li#' + data.id).find('ul.comments_section');
 
     // Be able to reply to the comment's comment
-    comments.reply_bind(data.root_id, comment_section);
+    comments.reply_bind(data.id, comment_section);
   },
 
   /**
@@ -104,7 +104,7 @@ var comments = {
           console.log('Show comments and reply form');
           console.log('The server will send all children');
 
-          comments.render(data, data['id'], comment_section);
+          // comments.render(data, data['id'], comment_section);
 
         }
         // There are no comments
@@ -134,6 +134,8 @@ var comments = {
   reply_bind: function(root_id, comment_section) {
     var reply_data = [],
       object_reply = {};
+
+      console.log('Trying to bind #form' + root_id);
 
     // Bind reply button. Will contact server.
     $('#form' + root_id).find('input.reply_button').click(function() {

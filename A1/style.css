@@ -71,6 +71,11 @@ li.topic a {
     font-weight:400;
 }
 
+.comment {
+    margin-left: 25px;
+    margin-top: 10px;
+}
+
 ul.counts {
     margin: 0;
     padding: 0;
