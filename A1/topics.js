@@ -258,7 +258,7 @@ var topics = {
 												currentTopic.link,
 												currentTopic.vote_count,
 												currentTopic.children_ids.length));
-			topics.bind_comment(1);
+			topics.bind_comment(currentTopic.id);
 		}
 	},
 	

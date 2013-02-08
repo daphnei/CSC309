@@ -89,6 +89,8 @@ var comments = {
     // The comment section has no elements displayed
     else {
 
+      console.log('Attempting to fetch comments from server: ' + url);
+
       // Get comment data from server (will cause error if no server is present)
       $.getJSON(url, function(data) {
 
@@ -176,13 +178,10 @@ var comments = {
   },
   
   bindUpvoteButton: function(root_id, comment_section) {
-	var reply_data = [],
-      object_reply = {},
-      reply_data = '';
 
     console.log('Trying to bind upvote button,  #form' + root_id);
       
-	// Bind upvote button. Will contact server.
+	  // Bind upvote button. Will contact server.
     $('#form' + root_id).find('input.up_button').click(function(){
         console.log('Upvote pressed for #form' + root_id);
         
@@ -197,9 +196,8 @@ var comments = {
                   
                   // DEBUG: The client should receive the updated node
                   console.log('Client receives upvoted comment: ' + JSON.stringify(new_data));
-				  console.log(new_data);
+				          console.log(new_data);
                   // NEED TO IMPLEMENT
-
              },
              contentType: "application/json",
              dataType: 'json'
