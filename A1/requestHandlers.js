@@ -127,6 +127,12 @@ function getComments(response) {
  * Called when client submts a new topic
  */
 function submitTopic(response, request) {
+	if (request.method != "POST") {
+		// POST requests are the only thing that should be accepted in this function!
+		// Assume they're looking for a file instead.
+		return getAsset(response, request);
+	}
+
 	console.log("Request handler 'topics/submit' was called.");
 	
 	var jsonString = '';
@@ -150,6 +156,12 @@ function submitTopic(response, request) {
  * Called when client submts a new comment
  */
 function submitComment(response, request) {
+	if (request.method != "POST") {
+		// POST requests are the only thing that should be accepted in this function!
+		// Assume they're looking for a file instead.
+		return getAsset(response, request);
+	}
+
 	console.log("Request handler '/reply' was called.");
 	
 	// read the comment data sent from the client
@@ -180,6 +192,12 @@ function submitComment(response, request) {
 }
 
 function upvote(response) {
+	if (request.method != "POST") {
+		// POST requests are the only thing that should be accepted in this function!
+		// Assume they're looking for a file instead.
+		return getAsset(response, request);
+	}
+
 	console.log("Request handler 'upvote' was called.");
 	
 	response.writeHead(200, {"Content-Type": "text/html"});
