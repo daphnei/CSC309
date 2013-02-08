@@ -42,7 +42,6 @@ var comments = {
    */
   render: function(data, comment_section) {
 	console.log("should be rendering comment with message " + data.content);
-	console.log(data);
     var reply_data = [],
       reply_form = '',
       object_reply = {};
@@ -92,21 +91,31 @@ var comments = {
       console.log('Attempting to fetch comments from server: ' + url);
 
       // Get comment data from server (will cause error if no server is present)
-      $.getJSON(url, function(data) {
+      $.getJSON(url, function(children) {
 
         // DEBUG:
         console.log('Client sends url: ' + url);
-        console.log('Client recieves: ' + JSON.stringify(data));
+        console.log('Client recieves: ' + JSON.stringify(children));
+
 
         // The length of the received array is the count of children for the root_id
-        if (data.length > 0) {
+        if (children.length > 0) {
 
           // DEBUG:
           console.log('Show comments and reply form for node: ' + root_id);
           console.log('The server sent all children as an array. Time to populate the frontend');
+          comments.first_comment(root_id, comment_section);
 
-          // comments.render(data, data['id'], comment_section);
+          // Render hidden comments for topics
+          for (var i = children.length - 1; i >= 0; i--) {
 
+            // Children of root display...
+            console.log('Rendering child: ' + JSON.stringify(children[i]));
+            comments.render(children[i], comment_section);
+            
+            // But children of children are missing...
+            // IMPLEMENT
+          };
         }
 
         // There are no comments
