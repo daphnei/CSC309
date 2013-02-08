@@ -57,8 +57,7 @@ var comments = {
     comment_section = $('li#' + data.id).find('ul.comments_section');
 
     // Be able to reply to the comment's comment
-    comments.bindReplyButton(data.id, comment_section);
-    comments.bindUpvoteButton(data.id, comment_section);
+    comments.reply_bind(data.id, comment_section);
   },
 
   /**
@@ -71,7 +70,7 @@ var comments = {
     // Get the topic id of the topic containing the comment section
     var root_id = $(section).parent().parent().attr("id"),
 
-      url = '/comments?id=' + root_id,
+      url = '/reply?id=' + root_id,
       comment_section = $('li#' + root_id).find('ul.comments_section'),
       clean_data = {};
 
@@ -129,16 +128,21 @@ var comments = {
 				'</form>';
 
     comment_section.append(reply_form);
-    comments.bindReplyButton(root_id, comment_section);
-    comments.bindUpvoteButton(root_id, comment_section);
+    comments.bind_reply_button(root_id, comment_section);
+    comments.bind_upvote_button(root_id, comment_section);
   },
-
-  bindReplyButton: function(root_id, comment_section) {
+  
+  
+  /**
+   * binds the reply/submit button and its call to the server
+   * 
+   */
+  bind_reply_button: function(root_id, comment_section) {
     var reply_data = [],
       object_reply = {},
       reply_data = '';
 
-      console.log('Trying to bind submit comment button,  #form' + root_id);
+      console.log('Trying to bind #form' + root_id);
 
     // Bind reply button. Will contact server.
     $('#form' + root_id).find('input.reply_button').click(function() {
@@ -175,14 +179,17 @@ var comments = {
     });
   },
   
-  bindUpvoteButton: function(root_id, comment_section) {
-	var reply_data = [],
+  /**
+   * binds the upvote button and its call to the server
+   * 
+  */
+  bind_upvote_button : function(root_id, comment_section) {
+	  var reply_data = [],
       object_reply = {},
       reply_data = '';
 
-    console.log('Trying to bind upvote button,  #form' + root_id);
-      
-	// Bind upvote button. Will contact server.
+
+      // Bind upvote button. Will contact server.
     $('#form' + root_id).find('input.up_button').click(function(){
         console.log('Upvote pressed for #form' + root_id);
         
@@ -190,14 +197,14 @@ var comments = {
              type: 'POST',
 
              // The server should extrapolate from the URL which node is being upvoted
-             url: '/comments/upvote?id=' + root_id,
+             url: '/upvote?id=' + root_id,
              
             // Update vote values and positioning of comments and topics
              success: function(new_data, textStatus, jqXHR) {
                   
                   // DEBUG: The client should receive the updated node
                   console.log('Client receives upvoted comment: ' + JSON.stringify(new_data));
-				  console.log(new_data);
+
                   // NEED TO IMPLEMENT
 
              },
@@ -206,7 +213,7 @@ var comments = {
          });       
     });
   },
-
+  
   /**
    * Reset the form to allow new input
    *

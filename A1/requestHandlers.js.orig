@@ -127,12 +127,6 @@ function getComments(response) {
  * Called when client submts a new topic
  */
 function submitTopic(response, request) {
-	if (request.method != "POST") {
-		// POST requests are the only thing that should be accepted in this function!
-		// Assume they're looking for a file instead.
-		return getAsset(response, request);
-	}
-
 	console.log("Request handler 'topics/submit' was called.");
 	
 	var jsonString = '';
@@ -156,13 +150,7 @@ function submitTopic(response, request) {
  * Called when client submts a new comment
  */
 function submitComment(response, request) {
-	if (request.method != "POST") {
-		// POST requests are the only thing that should be accepted in this function!
-		// Assume they're looking for a file instead.
-		return getAsset(response, request);
-	}
-
-	console.log("Request handler '/reply' was called.");
+	console.log("Request handler 'topics/submit' was called.");
 	
 	// read the comment data sent from the client
 	var commentData = '';
@@ -191,22 +179,11 @@ function submitComment(response, request) {
 	});
 }
 
-function upvote(response, request) {
-	if (request.method != "POST") {
-		// POST requests are the only thing that should be accepted in this function!
-		// Assume they're looking for a file instead.
-		return getAsset(response, request);
-	}
-
+function upvote(response) {
 	console.log("Request handler 'upvote' was called.");
-	// get the id of the comment to upvote
-	var queryData = url.parse(request.url, true).query;
-	var id = queryData.id;
-	var node = data.upvote(id);
 	
-	// returns the node that has been upvoted as a JSON object
-	response.writeHead(200, { "Content-Type" : MIME_TYPES['.json']});
-	response.write(JSON.stringify(node));
+	response.writeHead(200, {"Content-Type": "text/html"});
+	response.write("got to response");
 	response.end();
 }
 

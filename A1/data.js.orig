@@ -8,6 +8,7 @@ function insertComment(content, root) {
 	node.vote_count = 0;
 	node.id = nodes.length;
 	node.children_ids = new Array();
+  console.log("Root is: " + root);
 	node.root_id = root;
 	
 	//adds the new node's id to the list of children_ids for its parent
@@ -17,7 +18,6 @@ function insertComment(content, root) {
 	nodes.push(node);
 	return node;
 }
-
 /**
  * Inserts a node representing a topic
  * 
@@ -37,20 +37,6 @@ function insertTopic(description, link) {
 	return node;
 }
 
-/**
- * Raises the vote count for the comment node specified 
- * 
- * returns the node whose vote count was raised
- */
-function upvote(id) {
-	var node = nodes[id];
-	node.vote_count++;
-	//increase the root topic's vote count as well
-	nodes[node.root_id].vote_count++;
-	return node;
-}
-
-exports.upvote = upvote;
 exports.insertTopic = insertTopic;
 exports.insertComment = insertComment;
 exports.nodes = nodes;
