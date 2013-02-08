@@ -28,7 +28,7 @@ var comments = {
     '</form>' + '<ul class="counts">' + '<li>' + vote_count + ' points </li>' + '<li> | </li>' +
     '<li>' + comment_count + ' replies' + '</li>' + '</ul>' + '<ul class="comments_section">' +
     '</ul>' + '</li>';
-
+    
     return html;
   },
 
@@ -151,7 +151,7 @@ var comments = {
         // Send comment to server
         $.ajax({
           type: 'POST',
-          url: '/reply?pID=' + root_id,
+          url: '/reply?id=' + root_id,
           data: reply,
 
           // The server's response upon successfully sending the topic is 

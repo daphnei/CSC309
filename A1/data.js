@@ -8,6 +8,7 @@ function insertComment(content, root) {
 	node.vote_count = 0;
 	node.id = nodes.length;
 	node.children_ids = new Array();
+  console.log("Root is: " + root);
 	node.root_id = root;
 	
 	//adds the new node's id to the list of children_ids for its parent
@@ -30,7 +31,7 @@ function insertTopic(description, link) {
 	node.vote_count = 0;
 	node.id = nodes.length;
 	node.children_ids = new Array();
-	node.link = link
+	node.link = link;
 	
 	nodes.push(node);
 	return node;
