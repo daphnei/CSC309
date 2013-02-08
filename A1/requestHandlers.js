@@ -111,7 +111,6 @@ function getComments(response, request) {
 
 	// get parent ID
 	var queryData = url.parse(request.url, true).query;
-	console.log("Request to 'comment' with query: " + queryData);
 	var pid = queryData.id;
 	if (!isValid(pid)) {
 		response.writeHead(400, { "Content-Type" : MIME_TYPES['.txt']});
