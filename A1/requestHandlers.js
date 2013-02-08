@@ -11,7 +11,8 @@ MIME_TYPES = {
 		'.css': 'text/css',
 		'.js': 'text/javascript',
 		'.txt': 'text/plain',
-		'.json': 'application/json'
+		'.json': 'application/json',
+		'.ico' : 'image/vnd.microsoft.icon'
 };
 
 /**
@@ -96,7 +97,7 @@ function getNodeFromIndex(response, request) {
 }
 
 function isValid(id) {
-  return !(id < 0 || id >= data.nodes.length);
+	return !(id < 0 || id >= data.nodes.length);
 }
 
 /**
@@ -151,33 +152,30 @@ function submitTopic(response, request) {
 function submitComment(response, request) {
 	console.log("Request handler 'topics/submit' was called.");
 	
-  // read the comment data sent from the client
+	// read the comment data sent from the client
 	var commentData = '';
-  request.addListener('data', function(buffer) {
+	request.addListener('data', function(buffer) {
 		commentData += buffer; });
-  
-  // once we're done, create a new comment node and write it back to the
-  // client 
+	
+	// once we're done, create a new comment node and write it back to the
+	// client 
 	request.addListener('end', function() {
 		
-		console.log(commentData);
-		//console.log(response);
-
-    // get the id of the parent this comment is being added to from the
-    // request url
-    var queryData = url.parse(request.url, true).query;
-    var pid = queryData.id;
-    
-    if (!isValid(pid)) {
-      response.writeHead(400, { "Content-Type" : MIME_TYPES['.txt']});
-      response.end("400: Invalid reply subject.");
-    }
-    else {
-      var node = data.insertComment(commentData, pid);
-      response.writeHead(200, { "Content-Type" : MIME_TYPES['.json']});
-      response.write(JSON.stringify(node));
-      response.end();
-    }
+		// get the id of the parent this comment is being added to from the
+		// request url
+		var queryData = url.parse(request.url, true).query;
+		var pid = queryData.id;
+		
+		if (!isValid(pid)) {
+			response.writeHead(400, { "Content-Type" : MIME_TYPES['.txt']});
+			response.end("400: Invalid reply subject.");
+		}
+		else {
+			var node = data.insertComment(commentData, pid);
+			response.writeHead(200, { "Content-Type" : MIME_TYPES['.json']});
+			response.write(JSON.stringify(node));
+			response.end();
+		}
 	});
 }
 

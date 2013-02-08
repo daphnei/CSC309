@@ -9,7 +9,11 @@ function insertComment(content, root) {
 	node.id = nodes.length;
 	node.children_ids = new Array();
 	node.root_id = root;
-
+	
+	//adds the new node's id to the list of children_ids for its parent
+	if(node.root_id < nodes.length) {
+		nodes[node.root_id].children_ids.push(node.id);
+	}
 	nodes.push(node);
 	return node;
 }

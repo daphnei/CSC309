@@ -15,15 +15,18 @@ var comments = {
    *
    * @return {String} HTML comment
    */
-  create: function(data) {
-    var new_content = data.content,
-      comment_id = data.id,
-      vote_count = data.vote_count,
-      comment_count = data.comment_count;
+  createHTML: function(data) {
+    var new_content = data.content;
+    var comment_id = data.id;
+    var vote_count = data.vote_count;
+    var comment_count = data.children_ids.length;
 
-    html = '<li id=' + comment_id + ' class="comment">' + new_content + '<form id=form' + comment_id + ' class="reply_form">' + '<input value="" type="text" size="60" name="reply_content" class="reply_field"/>' + '<input value="Reply" type="button" name="reply_submit" class="reply_button"/>' + '<input type="text" style="display: none;" />' + // This fixes a quirk with pressing enter
-    '</form>' + '<ul class="counts">' + '<li>' + vote_count + ' points </li>' + '<li> | </li>' + '<li>' + comment_count + ' replies' + '</li>' + '</ul>' + '<ul class="comments_section">' +
-
+    html = '<li id=' + comment_id + ' class="comment">' + new_content + '<form id=form' + comment_id +
+    ' class="reply_form">' + '<input value="" type="text" size="60" name="reply_content" class="reply_field"/>' +
+    '<input value="Reply" type="button" name="reply_submit" class="reply_button"/>' +
+    '<input type="text" style="display: none;" />' + // This fixes a quirk with pressing enter
+    '</form>' + '<ul class="counts">' + '<li>' + vote_count + ' points </li>' + '<li> | </li>' +
+    '<li>' + comment_count + ' replies' + '</li>' + '</ul>' + '<ul class="comments_section">' +
     '</ul>' + '</li>';
 
     return html;
@@ -36,36 +39,37 @@ var comments = {
    * @param {String} root_id Comment or Topic that is being replied to
    * @param {Object} comment_section
    */
-  render: function(data, root_id, comment_section) {
-
+  render: function(data, comment_section) {
+	console.log("should be rendering comment with message " + data.content);
+	console.log(data);
     var reply_data = [],
       reply_form = '',
       object_reply = {};
 
     // Valid data
-    reply_form = comments.create(data);
-
+    reply_form = comments.createHTML(data)
+    
     // Display reply form
     comment_section.append(reply_form);
 
     // Nested Comment Section
-    comment_section = $('li#' + root_id).find('ul.comments_section');
+    comment_section = $('li#' + data.root_id).find('ul.comments_section')
 
     // Be able to reply to the comment's comment
-    comments.reply_bind(root_id, comment_section);
+    comments.reply_bind(data.root_id, comment_section);
   },
 
   /**
-   * Show the comment section. This routine will decipher from what topic.
+   * Get a list of comments from the server, and call the methods needed to render them
    *
    * @param {Object} section Unwrapped DOM object of the comment section
    */
-  show: function(section) {
+  getCommentsFromServer: function(section) {
 
     // Get the topic id of the topic containing the comment section
     var root_id = $(section).parent().parent().attr("id"),
 
-      url = '/topics?id=' + root_id,
+      url = '/reply?id=' + root_id,
       comment_section = $('li#' + root_id).find('ul.comments_section'),
       clean_data = {};
 
@@ -136,13 +140,10 @@ var comments = {
 
       // Get the data to send to the server
       reply_data = $('#form' + root_id).find('input.reply_field').serializeArray();
-var reply = reply_data[0].value;
+	  var reply = reply_data[0].value;
 
       // Make fields reusable after usage
       comments.reset_form($('#form' + root_id));
-
-      // DEBUG:
-      console.log('Client sends: ' + reply);
 
       if (reply == '') {
         console.log('Reply is empty');
@@ -157,8 +158,9 @@ var reply = reply_data[0].value;
 					// the corresponding json string
           success: function(new_data, textStatus, jqXHR) {
             // DEBUG:
-            console.log('Client receives comment: ' + JSON.stringify(new_data));
-            comments.render(new_data, root_id, comment_section);
+            console.log('Recieved comment node:');
+            dataJSON = JSON.parse(new_data);
+            comments.render(dataJSON, comment_section);
           },
           contentType: "text/plain",
           dataType: 'text'

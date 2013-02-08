@@ -177,8 +177,8 @@ var topics = {
 
         // Bind the interaction that will show the comments section upon clicking on it
         $('#' + topic_id).find('ul.counts').find('li.show_comments').click(function(){
-            comments.show(this);
-        });
+            comments.getCommentsFromServer(this);
+        }); //this binds the comment button on the topics
     },
         
 
