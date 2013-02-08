@@ -26,10 +26,13 @@ var topics = {
         // Bind event handlers for form after its in the DOM
         $('input#submit_button').click(function(){
             topics.submit();
+            //if the user had enter topic input that produced an error, no longer show that error
         });
         
         $('input#submit_cancel').click(function(){
             topics.hide_form();
+            //if the user had enter topic input that produced an error, no longer show that error
+            $('#submission_error').html(''); 
         });
     },
     
@@ -47,13 +50,16 @@ var topics = {
      */
     validate_title: function(field) {
         var message = '';
-		
+		var errorHTML = '';
         if (!field) {
             message = "You didn't fill in the title.";
+            errorHTML = '<div id="error">You need to specify a topic title.</div>';
         } else if(field.length > 140) {
             message = "Your title is too long!";
+            errorHTML = '<div id="error">Your topic cannot exceed 140 characters.</div>';
         }
-
+        //show an error message to the user
+		$('#submission_error').html(errorHTML);
         return message;
     },
 
@@ -73,7 +79,7 @@ var topics = {
 			clean_url : field,
 			rejection_reason : ''
 		};
-		
+		var errorHTML = '';
 		url_matcher = /^(https?|ftp):\/\/[a-z0-9-]+(\.[a-z0-9-]+)+([/?].*)?$/i
 		if (!field.match(url_matcher)) {
 			// It failed, but it may have been a url submitted without an http://. Try adding it.
@@ -82,7 +88,10 @@ var topics = {
 			if (!result.clean_url.match(url_matcher)) {
 				// There is no hope for this URL.
 				result.rejection_reason = "Invalid URL!";
+				errorHTML = '<div id="error">That\'s not a valid url.</div>';
 			}
+			
+			$('#submission_error').html(errorHTML);
 		}
 
         return result;

@@ -31,6 +31,11 @@ body {
     text-decoration:none;
 }
 
+#error {
+    color: #FF0000;
+    text-decoration:none;
+}
+
 ul, ul#navigation li {
     display: inline;
 }
