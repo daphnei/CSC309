@@ -51,7 +51,7 @@ var topics = {
         if (!field) {
             message = "You didn't fill in the title.";
         } else if(field.length > 140) {
-            message = "Your title is too damn long!";
+            message = "Your title is too long!";
         }
 
         return message;
