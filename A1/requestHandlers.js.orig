@@ -179,16 +179,11 @@ function submitComment(response, request) {
 	});
 }
 
-function upvote(response, request) {
+function upvote(response) {
 	console.log("Request handler 'upvote' was called.");
-	// get the id of the comment to upvote
-	var queryData = url.parse(request.url, true).query;
-	var id = queryData.id;
-	var node = data.upvote(id);
 	
-	//reeturns the node that has been upvoted as a JSON object
-	response.writeHead(200, { "Content-Type" : MIME_TYPES['.json']});
-	response.write(JSON.stringify(node));
+	response.writeHead(200, {"Content-Type": "text/html"});
+	response.write("got to response");
 	response.end();
 }
 
