@@ -103,8 +103,8 @@ function isValid(id) {
 }
 
 /**
- * Sends a JSON object conssting of all comments of a node
- * to the client.
+ * Sends a JSON object consisting of all comments (including nested comments)
+ * of a node to the client. Returned in pre-order.
  */
 function getComments(response, request) {
 	console.log("Request handler 'getComments' was called.");
@@ -119,13 +119,12 @@ function getComments(response, request) {
 	else {
 		response.writeHead(200, { "Content-Type" : MIME_TYPES['.json']});
 		
-		// get all children comments
-		var commentNodes = new Array();
-		var cids = data.nodes[pid].children_ids;
-		for (var i = 0; i < cids.length; i++) {
-			var cid = cids[i];
-			commentNodes.push(data.nodes[cid]);
-		}
+		// get all children comments...
+		var commentNodes = traverseComments(pid);
+
+		// ...but since traverseComments does a pre-order traversal, it also
+		// includes this node's own root ID at the front. Remove it.
+		commentNodes.shift();
 
 		// send them back to the client
 		console.log("Populated commentNodes with " + commentNodes.length + 
@@ -137,7 +136,30 @@ function getComments(response, request) {
 }
 
 /**
- * Called when client submts a new topic
+ * Get all the child comments of the given root node, in pre-order.
+ */
+function traverseComments(root_id) {
+	childNodes = new Array();
+
+	// since pre-order, start with root at beginning
+	childNodes.push(data.nodes[root_id]);
+
+	// now recurse through children comments, from top to bottom.
+	var cids = data.nodes[root_id].children_ids;
+	for (var i = 0; i < cids.length; i++) {
+		var cid = cids[i];
+		childNodes.concat(traverseComments(cid));
+	}
+	
+	console.log("Children of " + root_id + " are: ");
+	for (var i = 0; i < cids.length; i++) {
+		console.log("  " + childNodes[i].id);
+	}
+	return childNodes;
+}
+
+/**
+ * Called when client submits a new topic
  */
 function submitTopic(response, request) {
 	if (request.method != "POST") {
