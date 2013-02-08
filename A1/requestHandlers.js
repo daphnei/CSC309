@@ -146,13 +146,14 @@ function traverseComments(root_id) {
 
 	// now recurse through children comments, from top to bottom.
 	var cids = data.nodes[root_id].children_ids;
+  console.log("CIDs of " + root_id + " are " + cids);
 	for (var i = 0; i < cids.length; i++) {
 		var cid = cids[i];
 		childNodes = childNodes.concat(traverseComments(cid));
 	}
 	
-	console.log("Children of " + root_id + " are: ");
-	for (var i = 0; i < cids.length; i++) {
+	console.log("Traversal of " + root_id + " is: ");
+	for (var i = 0; i < childNodes.length; i++) {
 		console.log("  " + childNodes[i].id);
 	}
 	return childNodes;
