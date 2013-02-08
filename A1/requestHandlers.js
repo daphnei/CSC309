@@ -57,7 +57,9 @@ function getAsset(response, request) {
 	response.writeHead(200, {'Content-Type' : MIME_TYPES[path.extname(urlpath)]});
 
 	var filename = path.relative("/", urlpath);
-	var buffer = fs.readFile(filename, function(err, data) { serveFile(err, data, response); });
+	var buffer = fs.readFile(filename, function(err, data) { 
+		serveFile(err, data, response); 
+	});
 }
 
 /**
@@ -101,26 +103,38 @@ function isValid(id) {
 }
 
 /**
- * Sends a JSON object conssting of only topic nods to the server
+ * Sends a JSON object conssting of all comments of a node
+ * to the client.
  */
-function getComments(response) {
+function getComments(response, request) {
 	console.log("Request handler 'getComments' was called.");
 
-	response.writeHead(200, { "Content-Type": MIME_TYPES['.json']});
-	
-	//eventually need to get this from request
-	var id = 0;
-	
-	var commentNodes = new Array();
-	for (var i = 0; i < data.nodes.length; i++) {
-		if(data.nodes[i].type == 'comment' && data.nodes[i].root_id == id) {
-		commentNodes.push(data.nodes[i]);
+	// get parent ID
+	var queryData = url.parse(request.url, true).query;
+	console.log("Request to 'comment' with query: " + queryData);
+	var pid = queryData.id;
+	if (!isValid(pid)) {
+		response.writeHead(400, { "Content-Type" : MIME_TYPES['.txt']});
+		response.end("400: Invalid id specified.");
+	}
+	else {
+		response.writeHead(200, { "Content-Type" : MIME_TYPES['.json']});
+		
+		// get all children comments
+		var commentNodes = new Array();
+		var cids = data.nodes[pid].children_ids;
+		for (var i = 0; i < cids.length; i++) {
+			var cid = cids[i];
+			commentNodes.push(data.nodes[cid]);
 		}
+
+		// send them back to the client
+		console.log("Populated commentNodes with " + commentNodes.length + 
+			" items");
+		response.write(JSON.stringify(commentNodes));
+		response.end();
 	}
 	
-	console.log("Populated topicNodes with " + commentNodes.length + " items");
-	response.write(JSON.stringify(commentNodes));
-	response.end();
 }
 
 /**
