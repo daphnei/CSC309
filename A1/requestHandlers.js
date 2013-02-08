@@ -150,7 +150,7 @@ function submitTopic(response, request) {
  * Called when client submts a new comment
  */
 function submitComment(response, request) {
-	console.log("Request handler 'topics/submit' was called.");
+	console.log("Request handler '/reply' was called.");
 	
 	// read the comment data sent from the client
 	var commentData = '';
