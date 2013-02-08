@@ -145,11 +145,9 @@ function traverseComments(root_id) {
 	childNodes.push(data.nodes[root_id]);
 
 	// now recurse through children comments, from top to bottom.
+  // already sorted by vote count.
 	var cids = data.nodes[root_id].children_ids;
   
-  // sort children replies by vote count
-  cids.sort(voteComparer);
-
   console.log("CIDs of " + root_id + " are " + cids);
 	for (var i = 0; i < cids.length; i++) {
 		var cid = cids[i];
@@ -161,26 +159,6 @@ function traverseComments(root_id) {
 		console.log("  " + childNodes[i].id);
 	}
 	return childNodes;
-}
-
-/**
- * Compares the votes between the nodes with ids a and b.
- * Returns -1 if a's votes are greater than b's, 0 if equal, 1 if less.
- */
-function voteComparer(a, b) {
-  debugger;
-  a_votes = data.nodes[a].vote_count;
-  b_votes = data.nodes[b].vote_count;
-
-  if (a_votes > b_votes) {
-    return -1;
-  }
-  else if (a_votes === b_votes) {
-    return 0;
-  }
-  else {
-    return 1;
-  }
 }
 
 /**
