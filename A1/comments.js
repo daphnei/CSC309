@@ -70,7 +70,7 @@ var comments = {
     // Get the topic id of the topic containing the comment section
     var root_id = $(section).parent().parent().attr("id"),
 
-      url = '/reply?id=' + root_id,
+      url = '/comments?id=' + root_id,
       comment_section = $('li#' + root_id).find('ul.comments_section'),
       clean_data = {};
 
