@@ -15,22 +15,30 @@ var comments = {
    *
    * @return {String} HTML comment
    */
-  createHTML: function(data) {
+  createCommentsHTML: function(data) {
     var new_content = data.content;
     var comment_id = data.id;
     var vote_count = data.vote_count;
     var comment_count = data.children_ids.length;
 
-    html = '<li id=' + comment_id + ' class="comment">' + new_content + '<form id=form' + comment_id +
-    ' class="reply_form">' + '<input value="" type="text" size="60" name="reply_content" class="reply_field"/>' +
-    '<input value="Reply" type="button" name="reply_submit" class="reply_button"/>' +
-    '<input value="Upvote" type="button" name="up_reply" class="up_button"/>' +
-    '<input type="text" style="display: none;" />' + // This fixes a quirk with pressing enter
-    '</form>' + '<ul class="counts">' + '<li id="votecount' + comment_id + '">' + vote_count + ' points </li>' + '<li> | </li>' +
-    '<li>' + comment_count + ' replies' + '</li>' + '</ul>' + '<ul class="comments_section">' +
+    html = '<li id=' + comment_id + ' class="comment">' + new_content  + '<div/> <ul class="counts">' + '<li id="votecount' + comment_id + '">' + vote_count + ' points </li>' + '<li> | </li>' +
+    '<li>' + comment_count + ' replies' + '</li>' + '<li> | </li>' + 
+    '<li><a href="#" id="upvoteComment' + comment_id + '">upvote</a></li>' + '<li> | </li>' + 
+    '<li><a href="#" id="replyToComment' + comment_id + '">reply</a></li>' +
+    '<li id=commentFormSection' + comment_id + '></li>'
+    '</ul>' + '<ul class="comments_section">' +
     '</ul>' + '</li>';
     
     return html;
+  },
+  
+  createCommentFormHTML : function(comment_id) {
+	var form = '<form id=form' + comment_id +
+		' class="reply_form">' + '<input value="" type="text" size="60" name="reply_content" class="reply_field"/>' +
+		'<input value="Reply" type="button" name="reply_submit" class="reply_button"/>' +
+		'<input type="text" style="display: none;" />' + // This fixes a quirk with pressing enter
+		'</form>'
+	return form;
   },
 
   /**
@@ -42,22 +50,34 @@ var comments = {
    */
   render: function(data, comment_section) {
 	console.log("should be rendering comment with message " + data.content);
-    var reply_data = [],
-      reply_form = '',
-      object_reply = {};
+    var reply_data = [];
+    var commentsHTML;
+    var object_reply = {};
 
     // Valid data
-    reply_form = comments.createHTML(data)
+    commentsHTML = comments.createCommentsHTML(data);
     
     // Display reply form
-    comment_section.append(reply_form);
-
+    comment_section.append(commentsHTML);
+    console.log("appending");
+    //Make the upvote link call the upvote function
+	$('#upvoteComment' + data.id).click(function() {
+    	comments.sendUpvoteToServer(data.id);
+    });
+    
+    //Make the reply link show the comment submission form
+    $('#replyToComment' + data.id).click(function() {
+    	var form = comments.createCommentFormHTML(data.id);
+    	$('#commentFormSection' + data.id).html(form);
+    	//specify what the reply button will do
+    	comments.bindReplyButton(data.id, comment_section);
+    });
+    
     // Nested Comment Section
     comment_section = $('li#' + data.id).find('ul.comments_section');
 
     // Be able to reply to the comment's comment
-    comments.bindReplyButton(data.id, comment_section);
-    comments.bindUpvoteButton(data.id, comment_section);
+    //comments.bindUpvoteButton(data.id, comment_section);
   },
 
   /**
@@ -216,6 +236,31 @@ var comments = {
     });
   },
 
+  sendUpvoteToServer : function(id) {
+	  console.log('Upvote pressed for comment ' + id);
+        
+	$.ajax({
+		 type: 'POST',
+
+		 // The server should extrapolate from the URL which node is being upvoted
+		 url: '/comments/upvote?id=' + id,
+		 
+		// Update vote values and positioning of comments and topics
+		 success: function(new_data, textStatus, jqXHR) {
+			  
+			  // DEBUG: The client should receive the updated node
+			  console.log('Client received upvoted comment: ');
+			  console.log(new_data);
+			  // NEED TO IMPLEMENT REORDERING OF COMMENTS
+			  
+			  //change the text of the vote count to represent new tally
+			  $('#votecount' + id).html(new_data.vote_count + " points");
+		 },
+		 contentType: "application/json",
+		 dataType: 'json'
+	 });  
+  },
+  
   /**
    * Reset the form to allow new input
    *

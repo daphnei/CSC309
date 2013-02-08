@@ -36,6 +36,11 @@ body {
     text-decoration:none;
 }
 
+#upvoteComment {
+    color: #FF0000;
+    text-decoration:none;
+}
+
 ul, ul#navigation li {
     display: inline;
 }
