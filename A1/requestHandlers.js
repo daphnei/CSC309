@@ -148,7 +148,7 @@ function traverseComments(root_id) {
 	var cids = data.nodes[root_id].children_ids;
 	for (var i = 0; i < cids.length; i++) {
 		var cid = cids[i];
-		childNodes.concat(traverseComments(cid));
+		childNodes = childNodes.concat(traverseComments(cid));
 	}
 	
 	console.log("Children of " + root_id + " are: ");
