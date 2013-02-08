@@ -24,6 +24,7 @@ var comments = {
     html = '<li id=' + comment_id + ' class="comment">' + new_content + '<form id=form' + comment_id +
     ' class="reply_form">' + '<input value="" type="text" size="60" name="reply_content" class="reply_field"/>' +
     '<input value="Reply" type="button" name="reply_submit" class="reply_button"/>' +
+    '<input value="Upvote" type="button" name="up_reply" class="up_button"/>' +
     '<input type="text" style="display: none;" />' + // This fixes a quirk with pressing enter
     '</form>' + '<ul class="counts">' + '<li>' + vote_count + ' points </li>' + '<li> | </li>' +
     '<li>' + comment_count + ' replies' + '</li>' + '</ul>' + '<ul class="comments_section">' +
@@ -75,7 +76,6 @@ var comments = {
 
     // DEBUG:
     console.log('Show node: ' + root_id);
-
 
     // The comment section has elements displayed
     if (comment_section.children().length > 0) {
@@ -133,16 +133,42 @@ var comments = {
 
   reply_bind: function(root_id, comment_section) {
     var reply_data = [],
-      object_reply = {};
+      object_reply = {},
+      reply_data = '';
 
       console.log('Trying to bind #form' + root_id);
 
+      // Bind upvote button. Will contact server.
+    $('#form' + root_id).find('input.up_button').click(function(){
+        console.log('Upvote pressed for #form' + root_id);
+        
+        $.ajax({
+             type: 'POST',
+
+             // The server should extrapolate from the URL which node is being upvoted
+             url: '/upvote?id=' + root_id,
+             
+            // Update vote values and positioning of comments and topics
+             success: function(new_data, textStatus, jqXHR) {
+                  
+                  // DEBUG: The client should receive the updated node
+                  console.log('Client receives upvoted comment: ' + JSON.stringify(new_data));
+
+                  // NEED TO IMPLEMENT
+
+             },
+             contentType: "application/json",
+             dataType: 'json'
+         });       
+    });
+
     // Bind reply button. Will contact server.
     $('#form' + root_id).find('input.reply_button').click(function() {
+      console.log('Reply pressed for #form' + root_id);
 
       // Get the data to send to the server
       reply_data = $('#form' + root_id).find('input.reply_field').serializeArray();
-	  var reply = reply_data[0].value;
+	    reply = reply_data[0].value;
 
       // Make fields reusable after usage
       comments.reset_form($('#form' + root_id));
