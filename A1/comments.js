@@ -43,13 +43,13 @@ var comments = {
       object_reply = {};
 
     // Valid data
-    reply_form = comments.create(data)
+    reply_form = comments.create(data);
 
     // Display reply form
     comment_section.append(reply_form);
 
     // Nested Comment Section
-    comment_section = $('li#' + root_id).find('ul.comments_section')
+    comment_section = $('li#' + root_id).find('ul.comments_section');
 
     // Be able to reply to the comment's comment
     comments.reply_bind(root_id, comment_section);
