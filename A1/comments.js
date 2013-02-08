@@ -97,15 +97,13 @@ var comments = {
         // DEBUG:
         console.log('Client sends url: ' + url);
         console.log('Client recieves: ' + JSON.stringify(data));
-        // console.log('Comment count: ' + data.comment_count);
 
-        // WILL ALWAYS BE UNDEFINED
-        // WILL FIX THIS
-        if (data.comment_count > 0) {
+        // The length of the received array is the count of children for the root_id
+        if (data.length > 0) {
 
           // DEBUG:
-          console.log('Show comments and reply form');
-          console.log('The server will send all children');
+          console.log('Show comments and reply form for node: ' + root_id);
+          console.log('The server sent all children as an array. Time to populate the frontend');
 
           // comments.render(data, data['id'], comment_section);
 
