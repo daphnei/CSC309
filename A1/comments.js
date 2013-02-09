@@ -91,12 +91,19 @@ var comments = {
 		
 		var new_section = $('li#' + data.id).find('ul.comments_section');
 		
-		//Make the reply link show the comment submission form
+		// Make the reply link toggle the comment submission form
 		$('#replyToComment' + data.id).click(function() {
-			var form = comments.createCommentFormHTML(data.id);
-			$('#commentFormSection' + data.id).html(form);
-			//specify what the reply button will do
-			comments.bindReplyButton(data.id, new_section);
+			if ($('#commentFormSection' + data.id).children().length == 0) {
+			    // Show the form.
+    			var form = comments.createCommentFormHTML(data.id);
+    			$('#commentFormSection' + data.id).html(form);
+    			//specify what the reply button will do
+    			comments.bindReplyButton(data.id, new_section);
+    		}
+    		else {
+    		    // Hide the form
+    		    $('#commentFormSection' + data.id).empty();
+    		}
 		});
 		
 		// Return the nested comment section
