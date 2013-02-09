@@ -25,7 +25,7 @@ var comments = {
 		'<li>' + comment_count + ' replies' + '</li>' + '<li> | </li>' + 
 		'<li><a href="#" id="upvoteComment' + comment_id + '">upvote</a></li>' + '<li> | </li>' + 
 		'<li><a href="#" id="replyToComment' + comment_id + '">reply</a></li>' +
-		'<li id=commentFormSection' + comment_id + '></li>'
+		'<li id=commentFormSection' + comment_id + '></li>' +
 		'</ul>' + '<ul class="comments_section">' +
 		'</ul>' + '</li>';
 		
