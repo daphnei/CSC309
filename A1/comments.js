@@ -46,10 +46,11 @@ var comments = {
 	 *
 	 * @param {Object} data Object that contains all the information on how to create a comment
 	 * @param {String} root_id Comment or Topic that is being replied to
-	 * @param {Object} comment_section
+	 * @param {Object} comment_section The section to which you want to render this comment
+	 * @return {Object} The nested comment section of the newly rendered comment.
 	 */
 	render: function(data, comment_section) {
-	console.log("should be rendering comment with message " + data.content);
+	    console.log("should be rendering comment with message " + data.content);
 		var reply_data = [];
 		var commentsHTML;
 		var object_reply = {};
@@ -61,7 +62,7 @@ var comments = {
 		comment_section.append(commentsHTML);
 		console.log("appending");
 		//Make the upvote link call the upvote function
-	$('#upvoteComment' + data.id).click(function() {
+		$('#upvoteComment' + data.id).click(function() {
 			comments.sendUpvoteToServer(data.id);
 		});
 		
@@ -73,11 +74,8 @@ var comments = {
 			comments.bindReplyButton(data.id, comment_section);
 		});
 		
-		// Nested Comment Section
-		comment_section = $('li#' + data.id).find('ul.comments_section');
-
-		// Be able to reply to the comment's comment
-		//comments.bindUpvoteButton(data.id, comment_section);
+		// Return the nested comment section
+		return $('li#' + data.id).find('ul.comments_section');
 	},
 
 	/**
@@ -125,17 +123,31 @@ var comments = {
 					console.log('Show comments and reply form for node: ' + root_id);
 					console.log('The server sent all children as an array. Time to populate the frontend');
 					comments.first_comment(root_id, comment_section);
+					
+					// Recursively render comments by following the pre-order traversal
+					// that the server does, and assigning comments to the correct levels.
+					// Note that this assumes the comment list from the server is going to
+					// be in the correct order (pre-order)!
+					
+					var comment_sections_map = {};
+					// We'll use this hash map to keep track of the comment sections for each
+					// subcomment, indexed based on their id.
+					comment_sections_map[root_id] = comment_section;
 
 					// Render hidden comments for topics
-					for (var i = children.length - 1; i >= 0; i--) {
+					for (var i = 0; i < children.length; i++) {
 
 						// Children of root display...
 						console.log('Rendering child: ' + JSON.stringify(children[i]));
-						comments.render(children[i], comment_section);
 						
-						// But children of children are missing...
-						// IMPLEMENT
-					};
+						// Note that the following will only work if the comments are in
+						// pre-order traversal order.
+					    var new_section = comments.render(children[i],
+					                        comment_sections_map[children[i].root_id]);
+					                    
+					    // Save this newly rendered section in the hash map
+					    comment_sections_map[children[i].id] = new_section;
+					}
 				}
 
 				// There are no comments
