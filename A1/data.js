@@ -68,6 +68,8 @@ function getOriginID(id) {
     return null;
   }
   else {
+    
+    // go up the tree until we hit a node with no parent. That's the origin.
     var origin_id = id;
     while (nodes[origin_id].root_id != null) {
       origin_id = nodes[origin_id].root_id;
