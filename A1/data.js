@@ -110,3 +110,4 @@ exports.insertTopic = insertTopic;
 exports.insertComment = insertComment;
 exports.nodes = nodes;
 exports.isValid = isValid;
+exports.compareVoteCounts = compareVoteCounts;
