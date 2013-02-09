@@ -11,13 +11,13 @@ body {
     margin-right: auto;
     margin-left: auto;
     width:100%;
-    background-color:#F2F2F2;
+    background-color:#FFFFFF;
 }
 
 #header {
     padding-top:15px;
     height:45px;
-    background-color:#AB2017;
+    background-color:#F82F7C;
 }
 
 #site_name {
@@ -46,7 +46,7 @@ ul#navigation, ul#navigation li {
     float:right;
     margin-top:7px;
     margin-right:24px;
-    color:#FFFF00;
+    color:#FCF66F;
     cursor: hand; 
     cursor: pointer;
     font-weight:500;
@@ -97,6 +97,10 @@ li.topic a {
     font-weight:400;
 }
 
+.topic_title a {
+
+}
+
 .comment {
     margin-left: 25px;
     margin-top: 10px;
@@ -115,6 +119,5 @@ ul.counts li {
 
 #footer {
     height:30px;
-    background-color:#AB2017;
-    color: #FFFFFF;
+    background-color: #F82F7C;
 }
