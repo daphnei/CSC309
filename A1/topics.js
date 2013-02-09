@@ -165,8 +165,9 @@ var topics = {
     render: function(data) {
 
         // Convert JSON string into JavaScript Object
-        var new_topic = topics.createHTML(data.id, data.content, data.link, data.vote_count,
-											data.children_ids.length);
+        var new_topic = topics.createHTML(data.id, data.content, data.link, 
+                data.vote_count, data.child_count);
+        console.log("Topic has " + data.child_count + " children.")
 
         // Use create and then use jQuery to render on DOM...
         $('ol#content').append(new_topic);
@@ -257,7 +258,7 @@ var topics = {
 												currentTopic.content,
 												currentTopic.link,
 												currentTopic.vote_count,
-												currentTopic.children_ids.length));
+												currentTopic.child_count));
 			topics.bind_comment(currentTopic.id);
 		}
 	},

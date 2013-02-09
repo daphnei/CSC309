@@ -6,16 +6,26 @@ function insertComment(content, root) {
 	node.type = "comment";
 	node.content = content;
 	node.vote_count = 0;
+    node.child_count = 0;
 	node.id = nodes.length;
 	node.children_ids = new Array();
   
-  // this is the ID of the immediate parent, NOT the root of the tree
+    // this is the ID of the immediate parent, NOT the root of the tree
 	node.root_id = root;
 	
-	//adds the new node's id to the list of children_ids for its parent
+	// adds the new node's id to the list of children_ids for its parent
 	if(node.root_id < nodes.length) {
 		nodes[node.root_id].children_ids.push(node.id);
 	}
+
+    // correct the comment counts of all parent comments
+    var pid = root;
+    while (!(pid === null)) {
+        nodes[pid].child_count += 1;
+        console.log("Incrementing " + pid + "'s vote count.");
+        pid = nodes[pid].root_id;
+    }
+
 	nodes.push(node);
 	return node;
 }
@@ -31,10 +41,11 @@ function insertTopic(description, link) {
 	node.type = "topic";
 	node.content = description;
 	node.vote_count = 0;
+    node.child_count = 0;
 	node.id = nodes.length;
 	node.children_ids = new Array();
 	node.link = link;
-  node.root_id = null;
+    node.root_id = null;
 	
 	nodes.push(node);
 	return node;

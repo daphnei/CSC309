@@ -19,7 +19,7 @@ var comments = {
 		var new_content = data.content;
 		var comment_id = data.id;
 		var vote_count = data.vote_count;
-		var comment_count = data.children_ids.length;
+		var comment_count = data.child_count;
 
 		html = '<li id=' + comment_id + ' class="comment">' + new_content	+ '<br/> <ul class="counts">' + '<li id="votecount' + comment_id + '">' + vote_count + ' points </li>' + '<li> | </li>' +
 		'<li id="commentcount' + comment_id + '">' + comment_count + ' comments' + '</li>' + '<li> | </li>' + 
