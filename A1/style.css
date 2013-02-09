@@ -4,7 +4,8 @@ a:hover {color:black;}
 a:active {color:black;}
 
 body {
-    font-family: helvetica neue;
+    /*font-family: helvetica neue;*/
+    font-family: "Comic Sans MS","Marker Felt";
 }
 
 #frontpage {
@@ -117,7 +118,14 @@ ul.counts li {
     list-style-type:none;
 }
 
+#do_not_click_here {
+    padding-top: 5px;
+    padding-right: 5px;
+    float:right;
+    color: #ffffff;
+}
+
 #footer {
-    height:30px;
+    height:35px;
     background-color: #F82F7C;
 }
