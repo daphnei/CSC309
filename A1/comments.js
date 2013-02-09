@@ -20,15 +20,31 @@ var comments = {
 		var vote_count = data.vote_count;
 		var comment_count = data.child_count;
 
-		html = '<li id=' + comment_id + ' class="comment">' + new_content	+ '<br/> <ul class="counts">' + '<li id="votecount' + comment_id + '">' + vote_count + ' points </li>' + '<li> | </li>' +
-		'<li id="commentcount' + comment_id + '">' + comment_count + ' comments' + '</li>' + '<li> | </li>' + 
-		'<li><a href="#" id="upvoteComment' + comment_id + '">upvote</a></li>' + '<li> | </li>' + 
-		'<li><a href="#" id="replyToComment' + comment_id + '">reply</a></li>' +
-		'<li id=commentFormSection' + comment_id + '></li>' +
-		'</ul>' + '<ul class="comments_section">' +
-		'</ul>' + '</li>';
+		var html_string = '<li id=' + comment_id + ' class="comment"> </li>';
 		
-		return html;
+		var comment_footer =  '<br/> <ul class="counts">'
+    	    + '<li id="votecount' + comment_id + '">'
+    		+ vote_count + ' points </li>' + '<li> | </li>'
+    		+ '<li id="commentcount' + comment_id + '">' + comment_count + ' comments'
+    		+ '</li> <li> | </li>'
+    		+ '<li><a href="#" id="upvoteComment' + comment_id + '">upvote</a></li>'
+    		+ '<li> | </li>'
+    		+  '<li><a href="#" id="replyToComment' + comment_id + '">reply</a></li>'
+    		+ '<li id=commentFormSection' + comment_id + '></li>'
+    		+ '</ul> <ul class="comments_section"></ul>'
+		
+		var complete_html = $(html_string);
+		
+		// Add the (sanitized) content.
+		complete_html.text(new_content);
+		
+		// Replace all newlines in the content with <br />s.
+		complete_html.html(complete_html.html().replace(/[\r\n]/g, '<br />'));
+		
+		// Add the footer
+		complete_html.append(comment_footer);
+		
+		return complete_html.get();
 	},
 	
 	/**
