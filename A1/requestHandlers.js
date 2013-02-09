@@ -72,11 +72,14 @@ function getTopics(response) {
 	
 	var topicNodes = new Array();
 	for (var i = 0; i < data.nodes.length; i++) {
-		if(data.nodes[i].type == 'topic') {
-		topicNodes.push(data.nodes[i]);
+		if (data.nodes[i].type == 'topic') {
+            topicNodes.push(data.nodes[i]);
 		}
 	}
 	
+    topicNodes.sort(function(a, b) {
+        return data.compareVoteCounts(a.id, b.id);
+    });
 	console.log("Populated topicNodes with " + topicNodes.length + " items");
 	response.write(JSON.stringify(topicNodes));
 	response.end();

@@ -160,13 +160,14 @@ var topics = {
     /**
      * Place topic created from data on the frontpage
      *
-     * @param {JSON} data JSON  that contains all the information on how to create a form
+     * @param {JSON} data JSON that contains all the information on how to create a form
      */
     render: function(data) {
 
         // Convert JSON string into JavaScript Object
-        var new_topic = topics.createHTML(data.id, data.content, data.link, data.vote_count,
-											data.children_ids.length);
+        var new_topic = topics.createHTML(data.id, data.content, data.link, 
+                data.vote_count, data.child_count);
+        console.log("Topic has " + data.child_count + " children.")
 
         // Use create and then use jQuery to render on DOM...
         $('ol#content').append(new_topic);
@@ -257,14 +258,13 @@ var topics = {
 												currentTopic.content,
 												currentTopic.link,
 												currentTopic.vote_count,
-												currentTopic.children_ids.length));
+												currentTopic.child_count));
 			topics.bind_comment(currentTopic.id);
 		}
 	},
 	
     /**
 	 * requests json for front page topics from the server
-	 *
 	 */
 	getJSONForTopics : function() {
 			$.ajax('./topics', {
