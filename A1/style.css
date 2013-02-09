@@ -4,7 +4,6 @@ a:hover {color:black;}
 a:active {color:black;}
 
 body {
-    /*font-family: helvetica neue;*/
     font-family: "Comic Sans MS","Marker Felt";
 }
 
@@ -27,6 +26,10 @@ body {
     font-weight:700;
     color: #FFFFFF;
     text-decoration:none;
+}
+
+#moar_unicorns {
+    margin-top: 4px;
 }
 
 #error {
@@ -123,6 +126,7 @@ ul.counts li {
     padding-right: 5px;
     float:right;
     color: #ffffff;
+    font-size: 10pt;
 }
 
 #footer {
