@@ -22,7 +22,7 @@ var comments = {
 		var comment_count = data.children_ids.length;
 
 		html = '<li id=' + comment_id + ' class="comment">' + new_content	+ '<br/> <ul class="counts">' + '<li id="votecount' + comment_id + '">' + vote_count + ' points </li>' + '<li> | </li>' +
-		'<li>' + comment_count + ' replies' + '</li>' + '<li> | </li>' + 
+		'<li id="commentcount' + comment_id + '">' + comment_count + ' comments' + '</li>' + '<li> | </li>' + 
 		'<li><a href="#" id="upvoteComment' + comment_id + '">upvote</a></li>' + '<li> | </li>' + 
 		'<li><a href="#" id="replyToComment' + comment_id + '">reply</a></li>' +
 		'<li id=commentFormSection' + comment_id + '></li>' +
@@ -193,6 +193,9 @@ var comments = {
 			// Make fields reusable after usage
 			comments.reset_form($('#form' + root_id));
 
+			//remove the form after submission
+			$('#commentFormSection' + root_id).html("");
+			
 			if (reply == '') {
 				console.log('Reply is empty');
 			} else {
@@ -209,6 +212,10 @@ var comments = {
 						console.log('Recieved comment node:');
 						dataJSON = JSON.parse(new_data);
 						comments.render(dataJSON, comment_section);
+						
+						//DOES NOT WORK
+						//change the text of the comment count to represent new tally
+						//$('#commentcount' + id).html(new_data.children_ids.length + " comments");
 					},
 					contentType: "text/plain",
 					dataType: 'text'
@@ -223,28 +230,28 @@ var comments = {
 			
 		// Bind upvote button. Will contact server.
 		$('#form' + id).find('input.up_button').click(function(){
-				console.log('Upvote pressed for #form' + id);
-				
-				$.ajax({
-						 type: 'POST',
+			console.log('Upvote pressed for #form' + id);
+			
+			$.ajax({
+				 type: 'POST',
 
-						 // The server should extrapolate from the URL which node is being upvoted
-						 url: '/comments/upvote?id=' + id,
-						 
-						// Update vote values and positioning of comments and topics
-						 success: function(new_data, textStatus, jqXHR) {
-									
-									// DEBUG: The client should receive the updated node
-									console.log('Client received upvoted comment: ');
-					console.log(new_data);
-									// NEED TO IMPLEMENT REORDERING OF COMMENTS
-									
-									//change the text of the vote count to represent new tally
-									$('#votecount' + id).html(new_data.vote_count + " points");
-						 },
-						 contentType: "application/json",
-						 dataType: 'json'
-				 });			 
+				 // The server should extrapolate from the URL which node is being upvoted
+				 url: '/comments/upvote?id=' + id,
+				 
+				// Update vote values and positioning of comments and topics
+				 success: function(new_data, textStatus, jqXHR) {
+							
+							// DEBUG: The client should receive the updated node
+							console.log('Client received upvoted comment: ');
+							console.log(new_data);
+							// NEED TO IMPLEMENT REORDERING OF COMMENTS
+							
+							//change the text of the vote count to represent new tally
+							$('#votecount' + id).html(new_data.vote_count + " points");
+				 },
+				 contentType: "application/json",
+				 dataType: 'json'
+			 });			 
 		});
 	},
 
