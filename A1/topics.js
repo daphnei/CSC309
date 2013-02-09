@@ -273,5 +273,15 @@ var topics = {
 			success: function(data) { topics.showTopicsFromJSON(data); },
 			error  : function()     { topics.showTopicsFromJSON(null); }
 		});
-	}
+	},
+
+    /**
+     * Just horsing around.
+     */
+    cornify: function() {
+        var r = confirm("Are you sure you need more Unicorns?");
+        if (r == true) {
+            cornify_add();
+        }
+    }
 };  

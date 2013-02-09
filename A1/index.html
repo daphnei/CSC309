@@ -26,8 +26,8 @@
             
             <div id="footer">
                 <div id="do_not_click_here">
-                    Not enough Unicorns?
-                    <a href="http://www.cornify.com" onclick="cornify_add();return false;">
+                    <span>Not enough Unicorns?</span>
+                    <a href="http://www.cornify.com">
                         <img id="moar_unicorns" src="http://www.cornify.com/assets/cornify.gif" width="61" height="16" border="0" alt="Cornify" />
                     </a>
                 </div>
@@ -38,11 +38,23 @@
 
 <!-- Only JS Event Handlers. No Global Variables. -->
 <script>
+
+    // Submission form
 	$('#submit_article').click(function() {
     	topics.show_form();
     });
 
+    // Unicorn surprise
+    $('a #moar_unicorns').click(function(){
+        topics.cornify();
+
+        // Prevents anchor redirect
+        return false;
+    });
+
+    // Populate frontpage on refresh
 	topics.getJSONForTopics();
+
 </script>
 
 
