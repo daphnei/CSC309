@@ -83,9 +83,9 @@ function getOriginID(id) {
  *  Used by the sort method to sort to sort nodes by vote_count
  */
 function compareVoteCounts(index1, index2) {
-  if (nodes[index1].vote_count < nodes[index2].vote_count)
-     return -1;
   if (nodes[index1].vote_count > nodes[index2].vote_count)
+     return -1;
+  if (nodes[index1].vote_count < nodes[index2].vote_count)
     return 1;
   return 0;
 }
