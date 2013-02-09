@@ -15,4 +15,4 @@ Instructions
 ------------
 1. Extract using 'tar -zxf <filename>.gz'
 2. Run server 'node index.js'
-3. Access site using the URL: http://localhost:PORT_NAME/
+3. Access site using the URL: http://localhost:31285/
