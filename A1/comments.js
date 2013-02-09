@@ -22,8 +22,9 @@ var comments = {
 
 		html = '<li id=' + comment_id + ' class="comment">' + new_content	+ '<br/> <ul class="counts">' + '<li id="votecount' + comment_id + '">' + vote_count + ' points </li>' + '<li> | </li>' +
 		'<li id="commentcount' + comment_id + '">' + comment_count + ' comments' + '</li>' + '<li> | </li>' + 
-		'<li><a href="#" id="upvoteComment' + comment_id + '">upvote</a></li>' + '<li> | </li>' + 
-		'<li><a href="#" id="replyToComment' + comment_id + '">reply</a></li>' +
+		'<li class="indicator" id="upvoteComment' + comment_id + '"' + '>upvote</li>' +
+		'<li> | </li>' + 
+		'<li class="indicator" id="replyToComment' + comment_id + '">reply</a></li>' +
 		'<li id=commentFormSection' + comment_id + '></li>' +
 		'</ul>' + '<ul class="comments_section">' +
 		'</ul>' + '</li>';

@@ -24,9 +24,6 @@ body {
     display: inline;
     margin-left:25px;
     font-weight:700;
-}
-
-#site_name a {
     color: #FFFFFF;
     text-decoration:none;
 }
@@ -50,10 +47,27 @@ ul#navigation, ul#navigation li {
     margin-top:7px;
     margin-right:24px;
     color:#FFFF00;
-    text-decoration:none;
+    cursor: hand; 
+    cursor: pointer;
     font-weight:500;
     font-size:12pt;
     display: inline;
+}
+
+#replyToComment {
+    cursor: hand; 
+    cursor: pointer;
+}
+
+.indicator {
+    cursor: hand; 
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 #content {
