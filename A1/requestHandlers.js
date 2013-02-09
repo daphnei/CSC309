@@ -88,7 +88,7 @@ function getNodeFromIndex(response, request) {
 	var params = url.parse(request.url, true).query;
 	console.log("The id to retrieve a node for is " + params.id);
 	
-	if (!isValid(id)) {
+	if (!data.isValid(id)) {
 		console.log("The client requested a node ID that does not exist.");
 		response.writeHead(400, {'Content-Type' : MIME_TYPES['.txt']});
 		response.end("400: invalid topic id requested.");
@@ -98,9 +98,6 @@ function getNodeFromIndex(response, request) {
 	response.write(JSON.stringify(data.nodes[params.id]));
 }
 
-function isValid(id) {
-	return !(id === null || id < 0 || id >= data.nodes.length);
-}
 
 /**
  * Sends a JSON object consisting of all comments (including nested comments)
@@ -112,7 +109,7 @@ function getComments(response, request) {
 	// get parent ID
 	var queryData = url.parse(request.url, true).query;
 	var pid = queryData.id;
-	if (!isValid(pid)) {
+	if (!data.isValid(pid)) {
 		response.writeHead(400, { "Content-Type" : MIME_TYPES['.txt']});
 		response.end("400: Invalid id specified.");
 	}
@@ -215,7 +212,7 @@ function submitComment(response, request) {
 		var queryData = url.parse(request.url, true).query;
 		var pid = queryData.id;
 		
-		if (!isValid(pid)) {
+		if (!data.isValid(pid)) {
 			response.writeHead(400, { "Content-Type" : MIME_TYPES['.txt']});
 			response.end("400: Invalid reply subject.");
 		}
