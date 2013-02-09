@@ -8,10 +8,9 @@
 var comments = {
 
 	/**
-	 * Create the html that will render the matching comment id
+	 * Create comment html
 	 *
-	 * @param {String} content Content for the comment
-	 * @param {Integer} comment_id Unique identification for the comment node
+	 * @param {Object} data All information necessary to create a comment
 	 *
 	 * @return {String} HTML comment
 	 */
@@ -32,6 +31,13 @@ var comments = {
 		return html;
 	},
 	
+	/**
+	 * Create comment form html
+	 *
+	 * @param {Integer} comment_id ID for comment form
+	 *
+	 * @return {String} form HTML for the comment form
+	 */
 	createCommentFormHTML : function(comment_id) {
 	var form = '<form id=form' + comment_id +
 		' class="reply_form">' + '<input value="" type="text" size="60" name="reply_content" class="reply_field"/>' +
@@ -45,8 +51,8 @@ var comments = {
 	 * Place comment created from data on the corresponding node
 	 *
 	 * @param {Object} data Object that contains all the information on how to create a comment
-	 * @param {String} root_id Comment or Topic that is being replied to
-	 * @param {Object} comment_section The section to which you want to render this comment
+	 * @param {Object} comment_section Section to which you want to render this comment
+	 *
 	 * @return {Object} The nested comment section of the newly rendered comment.
 	 */
 	render: function(data, comment_section) {
@@ -165,6 +171,12 @@ var comments = {
 		}
 	},
 
+	/**
+	 * Create the reply form for the first comment of a topic
+	 *
+	 * @param {Integer} root_id ID for topic
+	 * @param {Object} comment_section jQuery Object for the comment section of the topic
+	 */
 	first_comment: function(root_id, comment_section) {
 		var reply_form = '<form id=form' + root_id + ' class="reply_form">' +
 				'<input value="" type="text" size="60" name="reply_content" class="reply_field"/>' +
@@ -177,6 +189,12 @@ var comments = {
 		comments.bindUpvoteButton(root_id, comment_section);
 	},
 
+	/**
+	 * Bind the reply button for comment or topic
+	 *
+	 * @param {Integer} root_id ID for topic
+	 * @param {Object} comment_section jQuery Object for the comment section of the topic
+	 */
 	bindReplyButton: function(root_id, comment_section) {
 		var reply_data = [],
 			object_reply = {},
@@ -226,6 +244,12 @@ var comments = {
 		});
 	},
 	
+	/**
+	 * Bind the upvote for a node
+	 *
+	 * @param {Integer} id ID for node that must have upvote button binded
+	 * @param {Object} comment_section jQuery Object for the comment section of the topic
+	 */
 	bindUpvoteButton: function(id, comment_section) {
 
 		console.log('Binding upvote button,	#form' + id);
@@ -257,6 +281,11 @@ var comments = {
 		});
 	},
 
+	/**
+	 * Tell server that an upvote occured at node
+	 *
+	 * @param {Integer} id ID for node that was upvoted
+	 */
 	sendUpvoteToServer : function(id) {
 		console.log('Upvote pressed for comment ' + id);
 				
@@ -272,7 +301,6 @@ var comments = {
 				// DEBUG: The client should receive the updated node
 				console.log('Client received upvoted comment: ');
 				console.log(new_data);
-				// NEED TO IMPLEMENT REORDERING OF COMMENTS
 				
 				//change the text of the vote count to represent new tally
 				$('#votecount' + id).html(new_data.vote_count + " points");

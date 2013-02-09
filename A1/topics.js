@@ -160,7 +160,7 @@ var topics = {
     /**
      * Place topic created from data on the frontpage
      *
-     * @param {JSON} data JSON  that contains all the information on how to create a form
+     * @param {JSON} data JSON that contains all the information on how to create a form
      */
     render: function(data) {
 
@@ -264,7 +264,6 @@ var topics = {
 	
     /**
 	 * requests json for front page topics from the server
-	 *
 	 */
 	getJSONForTopics : function() {
 			$.ajax('./topics', {
