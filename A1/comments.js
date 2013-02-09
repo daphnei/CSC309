@@ -175,9 +175,7 @@ var comments = {
 	},
 
 	bindReplyButton: function(root_id, comment_section) {
-		var reply_data = [],
-			object_reply = {},
-			reply_data = '';
+		var reply = '';
 
 			console.log('Binding submit comment button,	#form' + root_id);
 
@@ -186,8 +184,7 @@ var comments = {
 			console.log('Reply pressed for #form' + root_id);
 
 			// Get the data to send to the server
-			reply_data = $('#form' + root_id).find('textarea.reply_field').serializeArray();
-			reply = reply_data[0].value;
+			reply = $('#form' + root_id).find('textarea.reply_field').val();
 
 			// Make fields reusable after usage
 			comments.reset_form($('#form' + root_id));
