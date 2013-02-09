@@ -40,9 +40,10 @@ var comments = {
 	 */
 	createCommentFormHTML : function(comment_id) {
 	var form = '<form id=form' + comment_id +
-		' class="reply_form">' + '<input value="" type="text" size="60" name="reply_content" class="reply_field"/>' +
+		' class="reply_form">' +
+		'<textarea rows="3" cols="60" name="reply_content" class="reply_field"></textarea>' +
+		'<br/>' +
 		'<input value="Reply" type="button" name="reply_submit" class="reply_button"/>' +
-		'<input type="text" style="display: none;" />' + // This fixes a quirk with pressing enter
 		'</form>'
 	return form;
 	},
@@ -178,11 +179,7 @@ var comments = {
 	 * @param {Object} comment_section jQuery Object for the comment section of the topic
 	 */
 	first_comment: function(root_id, comment_section) {
-		var reply_form = '<form id=form' + root_id + ' class="reply_form">' +
-				'<input value="" type="text" size="60" name="reply_content" class="reply_field"/>' +
-				'<input value="Reply" type="button" name="reply_submit" class="reply_button"/>' +
-				'<input type="text" style="display: none;" />' + // This fixes a quirk with pressing enter
-				'</form>';
+		var reply_form = comments.createCommentFormHTML(root_id);
 
 		comment_section.append(reply_form);
 		comments.bindReplyButton(root_id, comment_section);
@@ -207,7 +204,7 @@ var comments = {
 			console.log('Reply pressed for #form' + root_id);
 
 			// Get the data to send to the server
-			reply_data = $('#form' + root_id).find('input.reply_field').serializeArray();
+			reply_data = $('#form' + root_id).find('textarea.reply_field').serializeArray();
 			reply = reply_data[0].value;
 
 			// Make fields reusable after usage
