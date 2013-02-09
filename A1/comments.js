@@ -66,16 +66,18 @@ var comments = {
 			comments.sendUpvoteToServer(data.id);
 		});
 		
+		var new_section = $('li#' + data.id).find('ul.comments_section');
+		
 		//Make the reply link show the comment submission form
 		$('#replyToComment' + data.id).click(function() {
 			var form = comments.createCommentFormHTML(data.id);
 			$('#commentFormSection' + data.id).html(form);
 			//specify what the reply button will do
-			comments.bindReplyButton(data.id, comment_section);
+			comments.bindReplyButton(data.id, new_section);
 		});
 		
 		// Return the nested comment section
-		return $('li#' + data.id).find('ul.comments_section');
+		return new_section;
 	},
 
 	/**
