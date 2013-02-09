@@ -146,8 +146,8 @@ var topics = {
                 '<ul class="counts">' +
                     '<li>' + vote_count + ' points </li>' +
                     '<li> | </li>' +
-                    '<li class="show_comments">' + '<a href="#">' + comment_count +
-									' comments </a>' + '</li>' +
+                    '<li class="show_comments indicator">' + comment_count +
+									' comments' + '</li>' +
                 '</ul>' +
                 '<ul class="comments_section">' +
 
