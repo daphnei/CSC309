@@ -249,10 +249,7 @@ var comments = {
 						console.log('Recieved comment node:');
 						dataJSON = JSON.parse(new_data);
 						comments.render(dataJSON, comment_section);
-						
-						//DOES NOT WORK
-						//change the text of the comment count to represent new tally
-						//$('#commentcount' + id).html(new_data.children_ids.length + " comments");
+						comments.incrementParentCommentCount(comment_section);
 					},
 					contentType: "text/plain",
 					dataType: 'text'
@@ -260,7 +257,42 @@ var comments = {
 			}
 		});
 	},
-	
+
+    /**
+     * Recursively goes up the comment tree, incrementing the client-side comment counts by 1.
+     *
+     * @param {Object} comment_section The ul.comments_section section whose parents you want
+     * to increment the count for.
+     */
+    incrementParentCommentCount: function(comment_section) {
+        // Sanity check to make sure we're working with the right level of the comment section.
+        if(!$(comment_section).hasClass("comments_section")) {
+            comment_section = $(comment_section).parents(".comments_section")[0];
+        }
+
+        var parent_section = $(comment_section).parent();
+
+        if (parent_section.hasClass("comment")) {
+            // The section is a subcomment.
+            var comment_count = parent_section.find(
+                                    "li#commentcount" + parent_section.attr("id"));
+
+            var num_comments = Number(comment_count.text().match(/(\d+) comments/)[1]);
+            comment_count.text((num_comments+1) + " comments ");
+
+            // Recursively go up the parents and increment their counts.
+            comments.incrementParentCommentCount(parent_section);
+        }
+        else if (parent_section.hasClass("topic")) {
+            // The section is a comment directly on a topic.
+            var comment_count = parent_section.find("li.show_comments");
+
+            var num_comments = Number(comment_count.text().match(/(\d+) comments/)[1]);
+            comment_count.text((num_comments+1) + " comments ");
+            // No recursion in this case.
+        }
+    },
+    
 	/**
 	 * Bind the upvote for a node
 	 *
