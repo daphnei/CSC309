@@ -55,13 +55,12 @@ var comments = {
 	 * @return {String} form HTML for the comment form
 	 */
 	createCommentFormHTML : function(comment_id) {
-	var form = '<form id=form' + comment_id +
-		' class="reply_form">' +
-		'<textarea rows="3" cols="60" name="reply_content" class="reply_field"></textarea>' +
-		'<br/>' +
-		'<input value="Reply" type="button" name="reply_submit" class="reply_button"/>' +
-		'</form>'
-	return form;
+		var form = '<form id=form' + comment_id + ' class="reply_form">' +
+						'<textarea rows="3" cols="60" name="reply_content" class="reply_field"></textarea>' +
+						'<br/>' +
+						'<input value="Reply" type="button" name="reply_submit" class="reply_button"/>' +
+					'</form>'
+		return form;
 	},
 
 	/**
@@ -83,7 +82,7 @@ var comments = {
 		
 		// Display reply form
 		comment_section.append(commentsHTML);
-		console.log("appending");
+		
 		//Make the upvote link call the upvote function
 		$('#upvoteComment' + data.id).click(function() {
 			comments.sendUpvoteToServer(data.id);
@@ -93,20 +92,25 @@ var comments = {
 		
 		// Make the reply link toggle the comment submission form
 		$('#replyToComment' + data.id).click(function() {
+			
 			if ($('#commentFormSection' + data.id).children().length == 0) {
-			    // Show the form.
+			    
     			var form = comments.createCommentFormHTML(data.id);
+    			
+    			// Show the form
     			$('#commentFormSection' + data.id).html(form);
-    			//specify what the reply button will do
+
+    			// Specify what the reply button will do
     			comments.bindReplyButton(data.id, new_section);
     		}
     		else {
+
     		    // Hide the form
     		    $('#commentFormSection' + data.id).empty();
     		}
 		});
 		
-		// Return the nested comment section
+		// Nested comment section
 		return new_section;
 	},
 
@@ -218,7 +222,7 @@ var comments = {
 	bindReplyButton: function(root_id, comment_section) {
 		var reply = '';
 
-			console.log('Binding submit comment button,	#form' + root_id);
+		console.log('Binding submit comment button,	#form' + root_id);
 
 		// Bind reply button. Will contact server.
 		$('#form' + root_id).find('input.reply_button').click(function() {
@@ -235,7 +239,8 @@ var comments = {
 			
 			if (reply == '') {
 				console.log('Reply is empty');
-			} else {
+			} 
+			else {
 				// Send comment to server
 				$.ajax({
 					type: 'POST',
@@ -249,10 +254,7 @@ var comments = {
 						console.log('Recieved comment node:');
 						dataJSON = JSON.parse(new_data);
 						comments.render(dataJSON, comment_section);
-						
-						//DOES NOT WORK
-						//change the text of the comment count to represent new tally
-						//$('#commentcount' + id).html(new_data.children_ids.length + " comments");
+
 					},
 					contentType: "text/plain",
 					dataType: 'text'
@@ -276,25 +278,23 @@ var comments = {
 			console.log('Upvote pressed for #form' + id);
 			
 			$.ajax({
-				 type: 'POST',
+				type: 'POST',
 
-				 // The server should extrapolate from the URL which node is being upvoted
-				 url: '/comments/upvote?id=' + id,
+				// The server should extrapolate from the URL which node is being upvoted
+				url: '/comments/upvote?id=' + id,
 				 
 				// Update vote values and positioning of comments and topics
-				 success: function(new_data, textStatus, jqXHR) {
+				success: function(new_data, textStatus, jqXHR) {
 							
-							// DEBUG: The client should receive the updated node
-							console.log('Client received upvoted comment: ');
-							console.log(new_data);
-							// NEED TO IMPLEMENT REORDERING OF COMMENTS
-							
-							//change the text of the vote count to represent new tally
-							$('#votecount' + id).html(new_data.vote_count + " points");
-				 },
-				 contentType: "application/json",
-				 dataType: 'json'
-			 });			 
+					// DEBUG: The client should receive the updated node
+					console.log('Client received upvoted comment: ' + JSON.stringify(new_data));
+					
+					// Change the text of the vote count to represent new tally
+					$('#votecount' + id).html(new_data.vote_count + " points");
+				},
+				contentType: "application/json",
+				dataType: 'json'
+			});			 
 		});
 	},
 
@@ -306,25 +306,24 @@ var comments = {
 	sendUpvoteToServer : function(id) {
 		console.log('Upvote pressed for comment ' + id);
 				
-	$.ajax({
-		 type: 'POST',
+		$.ajax({
+			type: 'POST',
 
-		 // The server should extrapolate from the URL which node is being upvoted
-		 url: '/comments/upvote?id=' + id,
-		 
-		// Update vote values and positioning of comments and topics
-		 success: function(new_data, textStatus, jqXHR) {
-				
+			// The server will extrapolate from the URL which node is being upvoted
+			url: '/comments/upvote?id=' + id,
+			 
+			// Update vote values and positioning of comments and topics
+			success: function(new_data, textStatus, jqXHR) {
+					
 				// DEBUG: The client should receive the updated node
-				console.log('Client received upvoted comment: ');
-				console.log(new_data);
+				console.log('Client received upvoted comment: ' + JSON.stringify(new_data));
 				
 				//change the text of the vote count to represent new tally
 				$('#votecount' + id).html(new_data.vote_count + " points");
-		 },
-		 contentType: "application/json",
-		 dataType: 'json'
-	 });	
+			},
+			contentType: "application/json",
+			dataType: 'json'
+		});	
 	},
 	
 	/**
@@ -334,7 +333,7 @@ var comments = {
 	 */
 	reset_form: function(form) {
 		form.find('input:text, input:password, input:file, select, textarea').val('');
-
-		form.find('input:radio, input:checkbox').removeAttr('checked').removeAttr('selected');
+		form.find('input:radio, input:checkbox').removeAttr('checked')
+												.removeAttr('selected');
 	}
 };
