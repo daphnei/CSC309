@@ -117,7 +117,6 @@ exports.compareVoteCounts = compareVoteCounts;
 */
 function prepopulate() {
 	var curr_node = {},
-		upvotes = 9000,
 		topics = [],
 		comments = [];
 
@@ -125,7 +124,6 @@ function prepopulate() {
 	topics.push(insertTopic("Unicorns a myth?","http://www.cornify.com/"));
 	topics.push(insertTopic("1001 ways to clean Unicorn Horns", "http://www.cornify.com/"));
 	topics.push(insertTopic("Anyone know how to scrub magical powder off?", "http://www.cornify.com/"));
-	topics.push(insertTopic("Bronies and Ponies living peacefully", "http://www.cornify.com/"));
 	topics.push(insertTopic("Pegasi better than Unicorns, TROLOLOL!","http://www.cornify.com/"));
 
 	// Comments
@@ -133,14 +131,42 @@ function prepopulate() {
 	comments.push(insertComment("Coca-Cola on my horn did the trick!", topics[1].id));
 	comments.push(insertComment("I think that made things worse, my horn is all sticky -.-", comments[1].id));
 	comments.push(insertComment("Diet Coke works really well. My horn is all polished up!", topics[1].id));
+	comments.push(insertComment("I suggest you seek wizardry assistance ASAP!", topics[2].id));
+	comments.push(insertComment("Only the counter-spell of a powerful Sorceror can revert the effects.", comments[4].id));
+	comments.push(insertComment("Or a Witch...", comments[5].id));
+	comments.push(insertComment("Or a Druid...", comments[5].id));
+	comments.push(insertComment("Or a Wicca...", comments[5].id));
+	comments.push(insertComment("A Wicca is a Witch", comments[8].id));
+	comments.push(insertComment("No, they are not. Wiccans don't receive formal training.", comments[9].id));
+	comments.push(insertComment("I don't believe in magic. C-C-C-C-C-C-Combo BREAKER!", comments[5].id));
+	comments.push(insertComment("Why would you want to scrub magical powder off? My unicorn tatoos now talk!", topics[2].id));
+	comments.push(insertComment("Don't feed the troll.", topics[3].id));
 	
-	for (var i = 9000; i > 0; i--) {
+	// Upvote "A myth is real if you believe it in your heart"
+	for (var i = 90; i > 0; i--) {
 		upvote(comments[0].id);
 	};
 
-	for (var i = 124; i > 0; i--) {
+	// Upvote "Diet Coke works really well. My horn is all polished up!"
+	for (var i = 12; i > 0; i--) {
 		upvote(comments[3].id);
 	};
+
+	// Upvote "I suggest you seek wizardry assistance ASAP!"
+	for (var i = 7; i > 0; i--) {
+		upvote(comments[4].id);
+	};
+
+	// Upvote "Only the counter-spell of a powerful sorceror can revert the effects."
+	for (var i = 3; i > 0; i--) {
+		upvote(comments[5].id);
+	};
+
+	// Upvote "No, they are not. Wiccans don't receive formal training."
+	for (var i = 4; i > 0; i--) {
+		upvote(comments[10].id);
+	};
+
 }
 
 // Should be called by some sort of URL that the client sends???
