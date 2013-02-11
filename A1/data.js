@@ -1,4 +1,4 @@
-var nodes = new Array();
+var nodes = [];
 
 function insertComment(content, root) {
 	var node = {};
@@ -111,3 +111,37 @@ exports.insertComment = insertComment;
 exports.nodes = nodes;
 exports.isValid = isValid;
 exports.compareVoteCounts = compareVoteCounts;
+
+/** 
+* Prepopulate server with fantastic content 
+*/
+function prepopulate() {
+	var curr_node = {},
+		upvotes = 9000,
+		topics = [],
+		comments = [];
+
+	// Topics
+	topics.push(insertTopic("Unicorns a myth?","http://www.cornify.com/"));
+	topics.push(insertTopic("1001 ways to clean Unicorn Horns", "http://www.cornify.com/"));
+	topics.push(insertTopic("Anyone know how to scrub magical powder off?", "http://www.cornify.com/"));
+	topics.push(insertTopic("Bronies and Ponies living peacefully", "http://www.cornify.com/"));
+	topics.push(insertTopic("Pegasi better than Unicorns, TROLOLOL!","http://www.cornify.com/"));
+
+	// Comments
+	comments.push(insertComment("A myth is real if you believe it in your heart", topics[0].id));
+	comments.push(insertComment("Coca-Cola on my horn did the trick!", topics[1].id));
+	comments.push(insertComment("I think that made things worse, my horn is all sticky -.-", comments[1].id));
+	comments.push(insertComment("Diet Coke works really well. My horn is all polished up!", topics[1].id));
+	
+	for (var i = 9000; i > 0; i--) {
+		upvote(comments[0].id);
+	};
+
+	for (var i = 124; i > 0; i--) {
+		upvote(comments[3].id);
+	};
+}
+
+// Should be called by some sort of URL that the client sends???
+prepopulate();
