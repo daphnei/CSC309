@@ -6,10 +6,9 @@ var handle = {}
 /* the main pages of the REST api */
 handle["/"] = requestHandlers.start; //the initial page with a list of topics
 handle["/index"] = requestHandlers.start; //the initial page with a list of topics
-handle["/topic"] = requestHandlers.getNodeFromIndex; // sends the topic node for the given id
-handle["/topics"] = requestHandlers.getTopics; //the initial page with a list of topics
+handle["/topics"] = router.routeTopics; // with id, sends the topic node for the given id, otherwise sends all topics
 handle["/topics/submit"] = requestHandlers.submitTopic; //sending in the filled out topic form
-handle["/reply"] = requestHandlers.submitComment;  //sending the filled out comments form
+handle["/comments/submit"] = requestHandlers.submitComment;  //sending the filled out comments form
 handle["/comments"] = requestHandlers.getComments; //get the comments for a particular topic
 handle["/comments/upvote"] = requestHandlers.upvote; //upvote a comment
 
