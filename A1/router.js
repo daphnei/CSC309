@@ -26,7 +26,6 @@ function routeTopics(response, request) {
 		requestHandlers.getNodeFromIndex(response, request);
 	}
 }
-
 function isEmpty(dict) {
 	return Object.keys(dict).length === 0;
 }
