@@ -72,7 +72,6 @@ var comments = {
 	 * @return {Object} The nested comment section of the newly rendered comment.
 	 */
 	render: function(data, comment_section) {
-	    console.log("should be rendering comment with message " + data.content);
 		var reply_data = [];
 		var commentsHTML;
 		var object_reply = {};
@@ -128,12 +127,8 @@ var comments = {
 			comment_section = $('li#' + root_id).find('ul.comments_section'),
 			clean_data = {};
 
-		// DEBUG:
-		console.log('Show node: ' + root_id);
-
 		// The comment section has elements displayed
 		if (comment_section.children().length > 0) {
-			console.log('Hide comments for node' + root_id);
 
 			// Hide the comments section
 			comment_section.children().remove();
@@ -142,22 +137,12 @@ var comments = {
 		// The comment section has no elements displayed
 		else {
 
-			console.log('Attempting to fetch comments from server: ' + url);
-
 			// Get comment data from server (will cause error if no server is present)
 			$.getJSON(url, function(children) {
-
-				// DEBUG:
-				console.log('Client sends url: ' + url);
-				console.log('Client recieves: ' + JSON.stringify(children));
-
 
 				// The length of the received array is the count of children for the root_id
 				if (children.length > 0) {
 
-					// DEBUG:
-					console.log('Show comments and reply form for node: ' + root_id);
-					console.log('The server sent all children as an array. Time to populate the frontend');
 					comments.first_comment(root_id, comment_section);
 					
 					// Recursively render comments by following the pre-order traversal
@@ -172,9 +157,6 @@ var comments = {
 
 					// Render hidden comments for topics
 					for (var i = 0; i < children.length; i++) {
-
-						// Children of root display...
-						console.log('Rendering child: ' + JSON.stringify(children[i]));
 						
 						// Note that the following will only work if the comments are in
 						// pre-order traversal order.
@@ -188,9 +170,6 @@ var comments = {
 
 				// There are no comments
 				else {
-
-					// DEBUG:
-					console.log('Show reply form');
 
 					// Display the reply for the topic
 					comments.first_comment(root_id, comment_section);
@@ -222,11 +201,8 @@ var comments = {
 	bindReplyButton: function(root_id, comment_section) {
 		var reply = '';
 
-		console.log('Binding submit comment button,	#form' + root_id);
-
 		// Bind reply button. Will contact server.
 		$('#form' + root_id).find('input.reply_button').click(function() {
-			console.log('Reply pressed for #form' + root_id);
 
 			// Get the data to send to the server
 			reply = $('#form' + root_id).find('textarea.reply_field').val();
@@ -250,8 +226,6 @@ var comments = {
 					// The server's response upon successfully sending the topic is 
 					// the corresponding json string
 					success: function(new_data, textStatus, jqXHR) {
-						// DEBUG:
-						console.log('Recieved comment node:');
 						dataJSON = JSON.parse(new_data);
 						comments.render(dataJSON, comment_section);
 						comments.incrementParentCommentCount(comment_section);
@@ -305,12 +279,9 @@ var comments = {
 	 * @param {Object} comment_section jQuery Object for the comment section of the topic
 	 */
 	bindUpvoteButton: function(id, comment_section) {
-
-		console.log('Binding upvote button,	#form' + id);
 			
 		// Bind upvote button. Will contact server.
 		$('#form' + id).find('input.up_button').click(function(){
-			console.log('Upvote pressed for #form' + id);
 			
 			$.ajax({
 				type: 'POST',
@@ -320,9 +291,6 @@ var comments = {
 				 
 				// Update vote values and positioning of comments and topics
 				success: function(new_data, textStatus, jqXHR) {
-							
-					// DEBUG: The client should receive the updated node
-					console.log('Client received upvoted comment: ' + JSON.stringify(new_data));
 					
 					// Change the text of the vote count to represent new tally
 					$('#votecount' + id).html(new_data.vote_count + " points");
@@ -339,7 +307,6 @@ var comments = {
 	 * @param {Integer} id ID for node that was upvoted
 	 */
 	sendUpvoteToServer : function(id) {
-		console.log('Upvote pressed for comment ' + id);
 				
 		$.ajax({
 			type: 'POST',
@@ -349,9 +316,6 @@ var comments = {
 			 
 			// Update vote values and positioning of comments and topics
 			success: function(new_data, textStatus, jqXHR) {
-					
-				// DEBUG: The client should receive the updated node
-				console.log('Client received upvoted comment: ' + JSON.stringify(new_data));
 				
 				//change the text of the vote count to represent new tally
 				$('#votecount' + id).html(new_data.vote_count + " points");
