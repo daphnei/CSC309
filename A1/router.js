@@ -1,3 +1,6 @@
+var url = require("url");
+var requestHandlers = require("./requestHandlers");
+
 function route(handle, pathname, response, request) {
   console.log("About to route a request for " + pathname);
   if (typeof handle[pathname] === 'function') {
@@ -12,4 +15,21 @@ function route(handle, pathname, response, request) {
   }
 }
 
+function routeTopics(response, request) {
+	var params = url.parse(request.url, true).query;
+	console.log(params + ", " + params.length);
+	if (isEmpty(params)) {
+		console.log("Routing topics to getTopics");
+		requestHandlers.getTopics(response, request);
+	} else {
+		console.log("Routing topics to getNodefromIndex");
+		requestHandlers.getNodeFromIndex(response, request);
+	}
+}
+
+function isEmpty(dict) {
+	return Object.keys(dict).length === 0;
+}
+
 exports.route = route;
+exports.routeTopics = routeTopics;

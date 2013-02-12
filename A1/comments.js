@@ -244,7 +244,7 @@ var comments = {
 				// Send comment to server
 				$.ajax({
 					type: 'POST',
-					url: '/reply?id=' + root_id,
+					url: '/comments/submit?id=' + root_id,
 					data: reply,
 
 					// The server's response upon successfully sending the topic is 
