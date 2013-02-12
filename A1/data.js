@@ -1,4 +1,4 @@
-var nodes = new Array();
+var nodes = [];
 
 function insertComment(content, root) {
 	var node = {};

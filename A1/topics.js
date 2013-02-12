@@ -123,7 +123,7 @@ var topics = {
     *
     * @param {Object} form_data  Contains more info besides the necessary data for a topic
     *
-    * @return {String} JSON objecr descibing topic
+    * @return {String} JSON object descibing topic
     */
     jsonify: function(form_data) {
         var json_data = [];
@@ -178,8 +178,6 @@ var topics = {
         var new_topic = topics.createHTML(data.id, 
                         data.content, data.link, 
                         data.vote_count, data.child_count);
-
-        console.log("Topic has " + data.child_count + " children.")
 
         // Use create and then use jQuery to render on DOM...
         $('ol#content').append(new_topic);
@@ -241,9 +239,7 @@ var topics = {
         }
         form_data[1].value = url_validation.clean_url;
 
-        // DEBUG: Not sending junk to server
         var toSend = topics.jsonify(form_data);
-        console.log(toSend);
         
         // Submit data to server (Will report an error without a server)
         $.ajax({
@@ -254,8 +250,6 @@ var topics = {
 
             // The server's response upon successfully sending the topic is the corresponding json string
             success: function(form_data, textStatus, jqXHR) {
-                console.log("Server response with:");
-                console.log(form_data);
                 topics.render(form_data)
             }
         });
