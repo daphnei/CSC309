@@ -1,0 +1,35 @@
+curl -i -X POST -d '["Unicorns a myth?", "http://www.cornify.com/"]' http://localhost:31285/topics/submit \
+
+curl -i -X POST -d '["1001 ways to clean Unicorn Horns", "http://www.cornify.com/"]' http://localhost:31285/topics/submit \
+
+curl -i -X POST -d '["Anyone know how to scrub magical powder off?", "http://www.cornify.com/"]' http://localhost:31285/topics/submit \
+
+curl -i -X POST -d '["Pegasi better than Unicorns, TROLOLOL!", "http://www.cornify.com/"]' http://localhost:31285/topics/submit \
+
+curl -i -X POST -d 'A myth is real if you believe it in your heart' http://localhost:31285/reply?id=0 \
+
+curl -i -X POST -d 'Coca-Cola on my horn did the trick!' http://localhost:31285/reply?id=1 \
+
+curl -i -X POST -d 'Diet Coke works really well. My horn is all polished up!' http://localhost:31285/reply?id=1 \
+
+curl -i -X POST -d 'I think that made things worse, my horn is all sticky -.-' http://localhost:31285/reply?id=5 \
+
+curl -i -X POST -d 'I suggest you seek wizardry assistance ASAP!' http://localhost:31285/reply?id=2 \
+
+curl -i -X POST -d 'Only the counter-spell of a powerful Sorceror can revert the effects.' http://localhost:31285/reply?id=8 \
+
+curl -i -X POST -d 'Or a Witch...' http://localhost:31285/reply?id=9 \
+
+curl -i -X POST -d 'Or a Druid...' http://localhost:31285/reply?id=9 \
+
+curl -i -X POST -d 'Or a Wicca...' http://localhost:31285/reply?id=9 \
+
+curl -i -X POST -d 'A Wicca is a Witch' http://localhost:31285/reply?id=12 \
+
+curl -i -X POST -d 'No, they are not. Wiccans do not receive formal training.' http://localhost:31285/reply?id=13 \
+
+curl -i -X POST -d 'I do not believe in magic. C-C-C-C-C-C-Combo BREAKER!' http://localhost:31285/reply?id=9 \
+
+curl -i -X POST -d 'Why would you want to scrub magical powder off? My unicorn tatoos now talk!' http://localhost:31285/reply?id=2 \
+
+curl -i -X POST -d 'Do not feed the troll.' http://localhost:31285/reply?id=3
