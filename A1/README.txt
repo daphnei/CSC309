@@ -10,11 +10,11 @@ Team
 
 Known Issues
 ------------
+* None that we are aware of
 
 Instructions
 ------------
-0. Open unix terminal
-1. Extract using 'tar -zxf <filename>.gz'
+1. Open unix terminal
 2. Run server 'node index.js'
 3. Access site using the URL: http://localhost:31285/
 4. [Optional] Populate frontpage by running every command from top to bottom in the Populate.txt file
